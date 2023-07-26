@@ -10,7 +10,7 @@ spring:
     password: password
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -18,3 +18,4 @@ spring:
     show-sql: true
   main:
     web-application-type: servlet
+

@@ -33,19 +33,29 @@ public class AttendeeTable {
     )
     private Integer attendeeTableId;
 
-    @Column(
+    // foreign key to member table (memberId)
+    @ManyToOne
+    @JoinColumn(
+            name = "memberId",
+            referencedColumnName = "memberId",
+            foreignKey = @ForeignKey(
+                    name = "member_id_fk"
+            ),
             nullable = false
     )
-    @ManyToOne
-    @JoinColumn(name = "memberId")
     private Member memberId;
 
-    @Column(
+    // foreign key to meeting table (meetingId)
+    @ManyToOne
+    @JoinColumn(
+            name = "meetingId",
+            referencedColumnName = "meetingId",
+            foreignKey = @ForeignKey(
+                    name = "meeting_id_fk"
+            ),
             nullable = false
     )
-    @ManyToOne
-    @JoinColumn(name = "meetingId")
-    private Meeting meetingId;
+    private MeetingTable meetingId;
 
     private AttendeeRole attendeeRole;
 
@@ -53,11 +63,11 @@ public class AttendeeTable {
     }
 
     public AttendeeTable(Integer attendeeTableId,
-                         Member member,
-                         Meeting meetingId,
+                         Member memberId,
+                         MeetingTable meetingId,
                          AttendeeRole attendeeRole) {
         this.attendeeTableId = attendeeTableId;
-        this.memberId = member;
+        this.memberId = memberId;
         this.meetingId = meetingId;
         this.attendeeRole = attendeeRole;
     }
@@ -78,11 +88,11 @@ public class AttendeeTable {
         this.memberId = memberId;
     }
 
-    public Meeting getMeetingId() {
+    public MeetingTable getMeetingId() {
         return meetingId;
     }
 
-    public void setMeetingId(Meeting meetingId) {
+    public void setMeetingId(MeetingTable meetingId) {
         this.meetingId = meetingId;
     }
 

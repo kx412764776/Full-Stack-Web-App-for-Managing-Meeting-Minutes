@@ -18,7 +18,7 @@ import java.util.Objects;
                 )
         }
 )
-public class Meeting {
+public class MeetingTable {
 
     @Id
     @SequenceGenerator(
@@ -54,15 +54,15 @@ public class Meeting {
 
     private String meetingDescription;
 
-    public Meeting() {
+    public MeetingTable() {
     }
 
-    public Meeting(Integer meetingId,
-                   String meetingTopic,
-                   String meetingName,
-                   Date meetingDate,
-                   String meetingDuration,
-                   String meetingDescription) {
+    public MeetingTable(Integer meetingId,
+                        String meetingTopic,
+                        String meetingName,
+                        Date meetingDate,
+                        String meetingDuration,
+                        String meetingDescription) {
         this.meetingId = meetingId;
         this.meetingTopic = meetingTopic;
         this.meetingName = meetingName;
@@ -123,8 +123,8 @@ public class Meeting {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Meeting meeting = (Meeting) o;
-        return Objects.equals(meetingId, meeting.meetingId) && Objects.equals(meetingTopic, meeting.meetingTopic) && Objects.equals(meetingName, meeting.meetingName) && Objects.equals(meetingDate, meeting.meetingDate) && Objects.equals(meetingDuration, meeting.meetingDuration) && Objects.equals(meetingDescription, meeting.meetingDescription);
+        MeetingTable meetingTable = (MeetingTable) o;
+        return Objects.equals(meetingId, meetingTable.meetingId) && Objects.equals(meetingTopic, meetingTable.meetingTopic) && Objects.equals(meetingName, meetingTable.meetingName) && Objects.equals(meetingDate, meetingTable.meetingDate) && Objects.equals(meetingDuration, meetingTable.meetingDuration) && Objects.equals(meetingDescription, meetingTable.meetingDescription);
     }
 
     @Override

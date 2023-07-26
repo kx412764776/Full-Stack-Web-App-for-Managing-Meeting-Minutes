@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface MemberDao {
 
+    // TODO: getMemberById method
     List<Member> selectAllUsers();
 }
