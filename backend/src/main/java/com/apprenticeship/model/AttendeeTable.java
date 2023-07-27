@@ -1,6 +1,6 @@
 package com.apprenticeship.model;
 
-import com.apprenticeship.enums.AttendeeRole;
+import com.apprenticeship.enums.MemberRole;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -57,19 +57,17 @@ public class AttendeeTable {
     )
     private MeetingTable meetingId;
 
-    private AttendeeRole attendeeRole;
 
     public AttendeeTable() {
     }
 
     public AttendeeTable(Integer attendeeTableId,
                          Member memberId,
-                         MeetingTable meetingId,
-                         AttendeeRole attendeeRole) {
+                         MeetingTable meetingId
+    ) {
         this.attendeeTableId = attendeeTableId;
         this.memberId = memberId;
         this.meetingId = meetingId;
-        this.attendeeRole = attendeeRole;
     }
 
     public Integer getAttendeeTableId() {
@@ -96,25 +94,17 @@ public class AttendeeTable {
         this.meetingId = meetingId;
     }
 
-    public AttendeeRole getAttendeeRole() {
-        return attendeeRole;
-    }
-
-    public void setAttendeeRole(AttendeeRole attendeeRole) {
-        this.attendeeRole = attendeeRole;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AttendeeTable that = (AttendeeTable) o;
-        return Objects.equals(attendeeTableId, that.attendeeTableId) && Objects.equals(memberId, that.memberId) && Objects.equals(meetingId, that.meetingId) && attendeeRole == that.attendeeRole;
+        return Objects.equals(attendeeTableId, that.attendeeTableId) && Objects.equals(memberId, that.memberId) && Objects.equals(meetingId, that.meetingId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(attendeeTableId, memberId, meetingId, attendeeRole);
+        return Objects.hash(attendeeTableId, memberId, meetingId);
     }
 
     @Override
@@ -123,7 +113,6 @@ public class AttendeeTable {
                "attendeeTableId=" + attendeeTableId +
                ", memberId=" + memberId +
                ", meetingId=" + meetingId +
-               ", attendeeRole=" + attendeeRole +
                '}';
     }
 }

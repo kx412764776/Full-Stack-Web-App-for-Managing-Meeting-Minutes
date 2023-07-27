@@ -1,7 +1,12 @@
 package com.apprenticeship.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -20,7 +25,7 @@ import java.util.Objects;
                         columnNames = "memberId"
                 )
         })
-public class Member {
+public class Member implements UserDetails {
 
     @Id
     @SequenceGenerator(
@@ -47,11 +52,6 @@ public class Member {
     @Column(
             nullable = false
     )
-    private String username;
-
-    @Column(
-            nullable = false
-    )
     private String email;
 
     @Column(
@@ -59,18 +59,23 @@ public class Member {
     )
     private String password;
 
+    @Column(
+            nullable = false
+    )
+    private String memberRole;
+
     public Member(Integer memberId,
                   String firstName,
                   String lastName,
-                  String username,
                   String email,
-                  String password) {
+                  String password,
+                  String memberRole) {
         this.memberId = memberId;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.username = username;
         this.email = email;
         this.password = password;
+        this.memberRole = memberRole;
     }
 
     public Member() {
@@ -101,14 +106,6 @@ public class Member {
         this.lastName = lastName;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -117,12 +114,50 @@ public class Member {
         this.email = email;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(memberRole));
+    }
+
     public String getPassword() {
-        return password;
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getMemberRole() {
+        return memberRole;
+    }
+
+    public void setMemberRole(String memberRole) {
+        this.memberRole = memberRole;
     }
 
     @Override
@@ -130,12 +165,12 @@ public class Member {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Member member = (Member) o;
-        return Objects.equals(memberId, member.memberId) && Objects.equals(firstName, member.firstName) && Objects.equals(lastName, member.lastName) && Objects.equals(username, member.username) && Objects.equals(email, member.email) && Objects.equals(password, member.password);
+        return Objects.equals(memberId, member.memberId) && Objects.equals(firstName, member.firstName) && Objects.equals(lastName, member.lastName) && Objects.equals(email, member.email) && Objects.equals(password, member.password) && Objects.equals(memberRole, member.memberRole);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(memberId, firstName, lastName, username, email, password);
+        return Objects.hash(memberId, firstName, lastName, email, password, memberRole);
     }
 
     @Override
@@ -144,9 +179,9 @@ public class Member {
                "memberId=" + memberId +
                ", firstName='" + firstName + '\'' +
                ", lastName='" + lastName + '\'' +
-               ", username='" + username + '\'' +
                ", email='" + email + '\'' +
                ", password='" + password + '\'' +
+               ", memberRole='" + memberRole + '\'' +
                '}';
     }
 }

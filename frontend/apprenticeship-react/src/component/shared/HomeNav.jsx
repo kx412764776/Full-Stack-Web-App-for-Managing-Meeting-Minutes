@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import minutesLogo from '../assets/minutes.svg';
+import { useState } from 'react';
+import minutesLogo from '../../assets/minutes.svg';
 import {
     Box,
     Flex,
@@ -161,7 +161,7 @@ function Nav() {
 const NAV_ITEMS = [
     {
         label: 'Home',
-        href: '#',
+        href: '/dashboard',
     },
     {
         label: 'Meeting',

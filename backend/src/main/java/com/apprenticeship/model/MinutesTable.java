@@ -2,7 +2,6 @@ package com.apprenticeship.model;
 
 import jakarta.persistence.*;
 
-import java.nio.file.Path;
 import java.util.Objects;
 
 /**
