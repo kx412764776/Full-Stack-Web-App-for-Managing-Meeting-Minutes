@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import minutesLogo from '../../assets/minutes.svg';
 import {
     Box,
@@ -6,7 +5,6 @@ import {
     Text,
     IconButton,
     Stack,
-    Icon,
     Popover,
     PopoverTrigger,
     PopoverContent,
@@ -15,14 +13,36 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
-    MenuDivider,
-    Image
+    Image, MenuDivider
 } from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { HamburgerIcon } from '@chakra-ui/icons';
+import {LoginAuth} from "../LoginContext.jsx";
+import {useEffect, useState} from "react";
+import {getMemberInfo} from "../../services/client.js";
+import {errorNotification} from "../../services/notification.js";
 
 
 export default function HomeNav() {
-    const [isOpen, setIsOpen] = useState(false);
+    const { memberEmail, logOut } = LoginAuth();
+
+    const [member, setMember] = useState([]);
+
+    const email = memberEmail();
+
+    const memberInfo = () => {
+        getMemberInfo(email).then(res => {
+            setMember(res.data)
+        }).catch(err => {
+            errorNotification(
+                err.code,
+                err.response.data.message
+            )
+        })
+    }
+
+    useEffect(() => {
+        memberInfo();
+    }, []);
 
     return (
         <Box>
@@ -37,14 +57,7 @@ export default function HomeNav() {
                 borderColor={useColorModeValue('gray.200', 'gray.900')}
                 align="center"
             >
-                <Flex flex={{ base: 1, md: 'auto' }} ml={{ base: -2 }} display={{ base: 'flex', md: 'none' }}>
-                    <IconButton
-                        onClick={() => setIsOpen(!isOpen)}
-                        icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
-                        variant="ghost"
-                        aria-label="Toggle Navigation"
-                    />
-                </Flex>
+
                 <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
                     <Image src={minutesLogo}
                            alt="logo"
@@ -57,7 +70,7 @@ export default function HomeNav() {
 
                 <Flex flex={{ base: 1, md: 0 }} justify="flex-end" align="center">
                     {/*TODO: replace with user name*/}
-                    <Box mr={4}>userName</Box>
+                    <Box mr={4}>{member.memberRoles}:{member.firstName}</Box>
                     <Menu>
                         <MenuButton
                             as={IconButton}
@@ -65,12 +78,21 @@ export default function HomeNav() {
                             icon={<HamburgerIcon />}
                             variant='outline'
                         />
-                        <MenuList>
+                        <MenuList >
+                            <Text
+                                ml={2}
+                                justifyContent={'center'}
+                            >
+                                Email: <br/>
+                                {member.email}
+                            </Text>
                             <MenuDivider />
                             <MenuItem>
                                 Account Settings
                             </MenuItem>
-                            <MenuItem>
+                            <MenuItem
+                                onClick={logOut}
+                            >
                                 Logout
                             </MenuItem>
                         </MenuList>
@@ -108,7 +130,6 @@ function SubNav({ label, href, subLabel }) {
                     align="center"
                     flex={1}
                 >
-                    <Icon color="pink.400" w={5} h={5} as={ChevronRightIcon} />
                 </Flex>
             </Stack>
         </Box>
@@ -142,15 +163,13 @@ function Nav() {
                             </Box>
                         </PopoverTrigger>
 
-                        {navItem.children && (
-                            <PopoverContent border={0} boxShadow="xl" bg={popoverContentBgColor} p={4} rounded="xl" minW="sm">
+                        {navItem.children && <PopoverContent border={0} boxShadow="xl" bg={popoverContentBgColor} p={4} rounded="xl" minW="sm">
                                 <Stack>
                                     {navItem.children.map(child => (
                                         <SubNav key={child.label} {...child} />
                                     ))}
                                 </Stack>
-                            </PopoverContent>
-                        )}
+                            </PopoverContent>}
                     </Popover>
                 </Box>
             ))}
@@ -161,15 +180,15 @@ function Nav() {
 const NAV_ITEMS = [
     {
         label: 'Home',
-        href: '/dashboard',
+        href: '/apprenticeship/dashboard',
     },
     {
         label: 'Meeting',
-        href: '/meeting',
+        href: '/apprenticeship/meeting',
     },
     {
         label: 'To Sign',
-        href: '/signatures',
+        href: '/apprenticeship/signatures',
     },
     {
         label: 'About',

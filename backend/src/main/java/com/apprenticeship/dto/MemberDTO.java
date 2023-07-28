@@ -8,6 +8,7 @@ public record MemberDTO(
         String lastName,
         String email,
         String password,
-        List<String> memberRoles
+        List<String> memberRoles,
+        String username
 ) {
 }

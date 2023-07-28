@@ -5,19 +5,13 @@ import {
     Text,
     Button
 } from '@chakra-ui/react'
+import {useNavigate} from "react-router-dom";
 
 
 export default function WelcomePage() {
 
-    // when user click on get started button, redirect to login page
-    const handleGetStarted = () => {
-        window.location.href = '/login'
-    }
+    const navigate = useNavigate();
 
-    // when user click on sign up button, redirect to register page
-    const handleSignUp = () => {
-        window.location.href = '/register'
-    }
 
 
     return (
@@ -52,14 +46,14 @@ export default function WelcomePage() {
                         colorScheme={'blue'}
                         bg={'blue.400'}
                         _hover={{bg: 'blue.600'}}
-                        onClick={handleGetStarted}
+                        onClick={() => navigate(`/apprenticeship/login`)}
                     >
                         Get started
                     </Button>
                     <Button
                         rounded={'full'}
                         px={6}
-                        onClick={handleSignUp}
+                        onClick={() => navigate(`/apprenticeship/register`)}
                     >
                         Sign up
                     </Button>

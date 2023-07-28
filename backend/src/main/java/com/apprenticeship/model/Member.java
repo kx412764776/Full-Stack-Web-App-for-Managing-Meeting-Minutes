@@ -78,6 +78,17 @@ public class Member implements UserDetails {
         this.memberRole = memberRole;
     }
 
+    public Member(String firstName,
+                  String lastName,
+                  String email,
+                  String password,
+                  String memberRole) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.memberRole = memberRole;
+    }
     public Member() {
 
     }

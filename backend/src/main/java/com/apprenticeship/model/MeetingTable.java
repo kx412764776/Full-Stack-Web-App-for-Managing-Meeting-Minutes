@@ -1,6 +1,7 @@
 package com.apprenticeship.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
 
 import java.util.Date;
 import java.util.Objects;

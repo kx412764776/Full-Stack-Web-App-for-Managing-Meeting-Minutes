@@ -1,16 +1,96 @@
 import {
     Flex,
     Box,
-    FormControl,
-    FormLabel,
-    Input,
     Stack,
     Button,
     Heading,
-    Text,
-    useColorModeValue,
+    useColorModeValue, Link, Text,
 } from '@chakra-ui/react'
-import {ArrowBackIcon} from "@chakra-ui/icons";
+import {ArrowBackIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
+import {Form, Formik} from "formik";
+import * as Yup from 'yup';
+import {LoginAuth} from "../LoginContext.jsx";
+import {useNavigate} from "react-router-dom";
+import {errorNotification, successNotification} from "../../services/notification.js";
+import {MyTextInput} from "../FromComponent.jsx";
+import {useState} from "react";
+
+const LoginForm = () => {
+    const {login} = LoginAuth();
+    const navigate = useNavigate();
+
+    const [showPassword, setShowPassword] = useState(false)
+
+    return (
+        <Formik
+            validateOnMount={true}
+            validationSchema={
+                Yup.object({
+                    username: Yup.string()
+                        .email("Must be valid email")
+                        .required("Email is required"),
+                    password: Yup.string()
+                        .max(20, "Password cannot be more than 20 characters")
+                        .required("Password is required")
+                })
+            }
+            initialValues={{username: '', password: ''}}
+            onSubmit={(values, {setSubmitting}) => {
+                setSubmitting(true);
+                login(values).then(() => {
+                    navigate(`/apprenticeship/dashboard`)
+                    successNotification("Welcome back!", "You have successfully logged in!")
+                }).catch(err => {
+                    errorNotification(
+                        err.code,
+                        err.response.data.message
+                    )
+                }).finally(() => {
+                    setSubmitting(false);
+                })
+            }}>
+
+            {({isValid, isSubmitting}) => (
+                <Form>
+                    <Stack mt={15} spacing={15}>
+                        <MyTextInput
+                            label={"Please enter your email"}
+                            name={"username"}
+                            type={"email"}
+                            placeholder={"joe@gmail.com"}
+                        />
+                        <Box position={"relative"}>
+                            <MyTextInput
+                                label={"Please enter your password"}
+                                name={"password"}
+                                type={showPassword ? "text" : "password"}
+                                placeholder={"Type your password"}
+                            />
+                            <Button
+                                onClick={() => setShowPassword(!showPassword)}
+                                size="sm"
+                                position="absolute"
+                                right="0"
+                                _hover={{bg: 'transparent'}}
+                            >
+                                {showPassword ? <ViewIcon/> : <ViewOffIcon/>}
+                            </Button>
+
+                        </Box>
+                        <Button
+                            type={"submit"}
+                            bg={'blue.400'}
+                            mt={8}
+                            isDisabled={!isValid || isSubmitting}>
+                            Sign in
+                        </Button>
+                    </Stack>
+                </Form>
+            )}
+
+        </Formik>
+    )
+}
 
 export default function LoginPage() {
     const handleBack = () => {
@@ -27,7 +107,7 @@ export default function LoginPage() {
                 <Button
                     size="lg"
                     colorScheme="gray"
-                    leftIcon={<ArrowBackIcon />}
+                    leftIcon={<ArrowBackIcon/>}
                     onClick={handleBack}
                 >
                     Back
@@ -43,31 +123,15 @@ export default function LoginPage() {
                     boxShadow={'lg'}
                     p={8}>
                     <Stack spacing={4}>
-                        <FormControl id="email">
-                            <FormLabel>Email address</FormLabel>
-                            <Input type="email" />
-                        </FormControl>
-                        <FormControl id="password">
-                            <FormLabel>Password</FormLabel>
-                            <Input type="password" />
-                        </FormControl>
-                        <Stack spacing={10}>
-                            <Stack
-                                direction={{ base: 'column', sm: 'row' }}
-                                align={'start'}
-                                justify={'space-between'}>
-                                <Text color={'blue.400'}>Forgot password?</Text>
-                            </Stack>
-                            <Button
-                                bg={'blue.400'}
-                                color={'white'}
-                                _hover={{
-                                    bg: 'blue.500',
-                                }}>
-                                Sign in
-                            </Button>
-                        </Stack>
+                        <LoginForm/>
                     </Stack>
+                    <Text fontSize={'sm'} color={'gray.600'} textAlign={'center'} mt={5}>
+                        Don't have an account? &nbsp;
+                        <Link color={"blue.500"} href={"/register"}>
+                            Sign up here!
+                        </Link>
+                    </Text>
+
                 </Box>
             </Stack>
         </Flex>

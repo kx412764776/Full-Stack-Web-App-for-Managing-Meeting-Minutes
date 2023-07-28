@@ -1,6 +1,6 @@
 package com.apprenticeship.service;
 
-import com.apprenticeship.repository.MemberDao;
+import com.apprenticeship.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,15 +13,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class MemberDetailsService implements UserDetailsService {
 
-    private final MemberDao memberDao;
+    private final MemberRepository memberRepository;
 
-    public MemberDetailsService(@Qualifier("memberRepository") MemberDao memberDao) {
-        this.memberDao = memberDao;
+    public MemberDetailsService(@Qualifier("memberJPARepository") MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return memberDao.selectMemberByEmail(email)
+        return memberRepository.findMemberByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         String.format("email %s not found", email))
                 );
