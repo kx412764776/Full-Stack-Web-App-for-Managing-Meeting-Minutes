@@ -45,8 +45,7 @@ public class SecurityFilterChainConfig {
                         authorizeHttpRequest
                                 .requestMatchers(
                                         HttpMethod.POST,
-                                        "/apprenticeship/login",
-                                        "/apprenticeship/register"
+                                        "/apprenticeship/**"
                                 )
                                 .permitAll()
                                 .anyRequest()

@@ -1,6 +1,7 @@
 package com.apprenticeship.controller;
 
 import com.apprenticeship.dto.MemberDTO;
+import com.apprenticeship.jwt.JWTUtil;
 import com.apprenticeship.service.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +16,14 @@ public class LoginController {
 
     private final MemberService memberService;
     private final LoginService loginService;
+    private final JWTUtil jwtUtil;
 
-    public LoginController(MemberService memberService, LoginService loginService) {
+    public LoginController(MemberService memberService,
+                           LoginService loginService,
+                           JWTUtil jwtUtil) {
         this.memberService = memberService;
         this.loginService = loginService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/login")
@@ -32,7 +37,10 @@ public class LoginController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody MemberRegistrationRequest request) {
         memberService.registerMember(request);
-        return ResponseEntity.ok().build();
+        String jwtToken = jwtUtil.issueToken(request.email(), request.memberRole());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                .build();
     }
 
     @PostMapping("/memberInfo/{memberEmail}")

@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * This interface is for accessing the database for member table
+ */
 @Repository("memberJPARepository")
 public interface MemberRepository extends JpaRepository<Member, Integer> {
 
