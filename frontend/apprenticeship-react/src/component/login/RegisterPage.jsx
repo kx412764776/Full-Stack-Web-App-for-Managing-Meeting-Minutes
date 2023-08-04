@@ -10,16 +10,14 @@ import {
 } from '@chakra-ui/react'
 import {ArrowBackIcon, ViewIcon, ViewOffIcon} from '@chakra-ui/icons'
 import {Form, Formik} from "formik";
-import {useNavigate} from "react-router-dom";
 import * as Yup from "yup";
-import {errorNotification, successNotification} from "../../services/notification.js";
-import {MySelect, MyTextInput} from "../FromComponent.jsx";
+import {MySelect, MyTextInput} from "../FormComponent.jsx";
 import {useState} from "react";
 import {register} from "../../services/client.js";
+import {LoginAuth} from "../context/LoginContext.jsx";
 
 
-const RegisterForm = () => {
-    const navigate = useNavigate();
+const RegisterForm = ({ onSuccess }) => {
 
     const [showPassword, setShowPassword] = useState(false)
 
@@ -29,8 +27,10 @@ const RegisterForm = () => {
             validationSchema={
                 Yup.object({
                     firstname: Yup.string()
+                        .matches(/^[a-zA-Z]*$/, 'Only letters are allowed')
                         .required("First name is required"),
                     lastname: Yup.string()
+                        .matches(/^[a-zA-Z]*$/, 'Only letters are allowed')
                         .required("Last name is required"),
                     email: Yup.string()
                         .email("Must be valid email")
@@ -54,15 +54,12 @@ const RegisterForm = () => {
                 memberRole: ''}}
             onSubmit={(member, {setSubmitting}) => {
                 setSubmitting(true);
-                register(member).then(() => {
-                    navigate(`/apprenticeship/login`)
-                    successNotification("Congratulations!",
-                        "You have successfully registered!")
+                register(member)
+                    .then(res => {
+                    window.location.href = "/apprenticeship/login";
+                    onSuccess(res.headers["authorization"]);
                 }).catch(err => {
-                    errorNotification(
-                        err.code,
-                        err.response.data.message
-                    )
+                    console.log(err);
                 }).finally(() => {
                     setSubmitting(false);
                 })
@@ -130,7 +127,7 @@ const RegisterForm = () => {
                             type={"submit"}
                             bg={'blue.400'}
                             isDisabled={!isValid || isSubmitting}>
-                            Sign in
+                            Register
 
                         </Button>
                     </Stack>
@@ -142,13 +139,8 @@ const RegisterForm = () => {
 }
 
 export default function RegisterPage() {
-    const handleLogin = () => {
-        window.location.href = '/login'
-    }
 
-    const handleBack = () => {
-        window.location.href = '/'
-    }
+    const {setMemberFromToken} = LoginAuth();
 
     return (
         <Flex
@@ -173,20 +165,32 @@ export default function RegisterPage() {
                     <Stack spacing={4}>
                         <Box pos="absolute" top="6" left="6">
                             <Button
+                                onClick={() => window.location.href = "/apprenticeship"}
                                 size="lg"
                                 colorScheme="gray"
                                 leftIcon={<ArrowBackIcon/>}
-                                onClick={handleBack}
+
                             >
                                 Back
                             </Button>
                         </Box>
 
-                        <RegisterForm/>
+                        <RegisterForm
+                            onSuccess={(token) => {
+                                localStorage.setItem("token", token)
+                                setMemberFromToken()
+                                window.location.href = "/apprenticeship"
+                            }}
+                        />
                         <Stack pt={6}>
                             <Text align={'center'}>
-                                Already a user?
-                                <Link onClick={handleLogin} color={'blue.400'}> Login</Link>
+                                Already a user? &nbsp;
+                                <Link
+                                    color={"blue.500"}
+                                    onClick={() => window.location.href = "/apprenticeship/login"}
+                                >
+                                    Login
+                                </Link>
                             </Text>
                         </Stack>
                     </Stack>

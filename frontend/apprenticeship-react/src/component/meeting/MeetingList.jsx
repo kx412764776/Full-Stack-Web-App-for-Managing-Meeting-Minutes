@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
-import {errorNotification} from '../../services/notification';
-import {getMeetingInfo} from "../../services/client.js";
+import {getMeetingInfo, getMeetingInfoByEmail} from "../../services/client.js";
 import {LoginAuth} from "../context/LoginContext.jsx";
 import Highlighter from 'react-highlight-words';
 import {Button, Input, Space, Table} from 'antd';
@@ -18,14 +17,18 @@ const MeetingList = () =>  {
     useEffect(() => {
         const fetchMeetingInfo = async () => {
             try {
-                const memberEmail = memberInfo?.email;
-                if (memberEmail) {
-                    const res = await getMeetingInfo(memberEmail);
-                    console.log(res.data);
-                    setMeetingInfoList(res.data);
+                let res;
+                console.log(memberInfo.memberRole);
+                if (memberInfo.role === 'ACADEMIC') {
+                    res = await getMeetingInfo();
+                } else {
+                    const memberEmail = memberInfo.email;
+                    res = await getMeetingInfoByEmail(memberEmail);
                 }
+                console.log(res.data);
+                setMeetingInfoList(res.data);
             } catch (err) {
-                errorNotification(err.code, err.response?.data?.message);
+                console.log(err);
             }
         };
         fetchMeetingInfo();
@@ -114,10 +117,60 @@ const MeetingList = () =>  {
         ...getColumnSearchProps(key), // Apply search functionality to each column
     })) : [];
 
+    // If Login member is ACADEMIC,
+    // add columns for adding meeting minutes, add participants and edit meeting info
+    if (memberInfo.role === 'ACADEMIC') {
+        columns.push([
+            {
+                title: 'Meeting Minutes',
+                dataIndex: 'meetingMinutes',
+                render: () => (
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            //TODO: redirect to meeting minutes page
+                            window.location.href = ``;
+                        }}
+                    >
+                        Add Meeting Minutes
+                    </Button>
+                )
+            },
+            {
+                title: 'Participants',
+                dataIndex: 'participants',
+                render: () => (
+                    <Space>
+                        <Button
+                            type="primary"
+                            onClick={() => {
+                                //TODO: Add participants
+                                window.location.href = ``;
+                            }}
+                        >
+                            Add Participants
+                        </Button>
+                        <Button
+                            type="primary"
+                            onClick={() => {
+                                //TODO: view participants
+                                window.location.href = ``;
+                            }}
+                        >
+                            View Participants
+                        </Button>
+                    </Space>
+                )
+            }
+        ])
+    }
+
     // change the format of memberDate
     const modifiedData = meetingInfoList.map(item => {
         const { meetingDate, ...rest } = item;
-        const modifiedMemberDate = new Date(meetingDate).toLocaleString().split(',')[0];
+        let date = new Date(meetingDate);
+        const modifiedMemberDate =
+            date.toLocaleString().split(',')[0] + ' ' + date.toLocaleString().split(',')[1];
         return { ...rest, meetingDate: modifiedMemberDate };
     });
 

@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import {LoginAuth} from "../LoginContext.jsx";
+import {LoginAuth} from "../context/LoginContext.jsx";
 
 const ProtectedRoute = ({ children }) => {
 

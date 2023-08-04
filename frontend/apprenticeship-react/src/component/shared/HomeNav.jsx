@@ -13,36 +13,29 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
-    Image, MenuDivider
+    Image,
+    MenuDivider, Portal
 } from '@chakra-ui/react';
-import { HamburgerIcon } from '@chakra-ui/icons';
-import {LoginAuth} from "../LoginContext.jsx";
-import {useEffect, useState} from "react";
-import {getMemberInfo} from "../../services/client.js";
-import {errorNotification} from "../../services/notification.js";
+import {HamburgerIcon} from '@chakra-ui/icons';
+import {LoginAuth} from "../context/LoginContext.jsx";
+import { useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 
-export default function HomeNav() {
-    const { memberEmail, logOut } = LoginAuth();
+export function HomeNav() {
 
-    const [member, setMember] = useState([]);
-
-    const email = memberEmail();
-
-    const memberInfo = () => {
-        getMemberInfo(email).then(res => {
-            setMember(res.data)
-        }).catch(err => {
-            errorNotification(
-                err.code,
-                err.response.data.message
-            )
-        })
-    }
+    const {memberInfo, logOut} = LoginAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        memberInfo();
-    }, []);
+        if (!memberInfo) {
+            navigate('/login')
+            setTimeout(() => {
+                logOut();
+            }, 0)
+        }
+    }, [memberInfo, navigate]);
+
 
     return (
         <Box>
@@ -50,52 +43,57 @@ export default function HomeNav() {
                 bg={useColorModeValue('white', 'gray.800')}
                 color={useColorModeValue('gray.600', 'white')}
                 minH="60px"
-                py={{ base: 2 }}
-                px={{ base: 4 }}
+                py={{base: 2}}
+                px={{base: 4}}
                 borderBottom={1}
                 borderStyle="solid"
                 borderColor={useColorModeValue('gray.200', 'gray.900')}
                 align="center"
             >
 
-                <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
+                <Flex flex={{base: 1}} justify={{base: 'center', md: 'start'}}>
                     <Image src={minutesLogo}
                            alt="logo"
                            boxSize="50px"
                     />
-                    <Flex display={{ base: 'none', md: 'flex' }} ml={10} mt={3}>
-                        <Nav />
+                    <Flex display={{base: 'none', md: 'flex'}} ml={10} mt={3}>
+                        <Nav/>
                     </Flex>
                 </Flex>
 
-                <Flex flex={{ base: 1, md: 0 }} justify="flex-end" align="center">
-                    {/*TODO: replace with user name*/}
-                    <Box mr={4}>{member.memberRoles}:{member.firstName}</Box>
+                <Flex flex={{base: 1, md: 1}} justify="flex-end" align="center">
+                    <Box mr={4}>{memberInfo.memberRoles}</Box>
                     <Menu>
                         <MenuButton
                             as={IconButton}
                             aria-label='Options'
-                            icon={<HamburgerIcon />}
+                            icon={<HamburgerIcon/>}
                             variant='outline'
                         />
-                        <MenuList >
-                            <Text
-                                ml={2}
-                                justifyContent={'center'}
-                            >
-                                Email: <br/>
-                                {member.email}
-                            </Text>
-                            <MenuDivider />
-                            <MenuItem>
-                                Account Settings
-                            </MenuItem>
-                            <MenuItem
-                                onClick={logOut}
-                            >
-                                Logout
-                            </MenuItem>
-                        </MenuList>
+                        <Portal>
+                            <MenuList>
+                                <Text
+                                    ml={2}
+                                    justifyContent={'center'}
+                                    style={{zIndex: 1000}}
+                                >
+                                    Email: <br/>
+                                    {memberInfo.email}
+                                </Text>
+                                <MenuDivider/>
+                                <MenuItem>
+                                    Account Settings
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        navigate(`/`)
+                                        logOut();
+                                    }}
+                                >
+                                    Logout
+                                </MenuItem>
+                            </MenuList>
+                        </Portal>
                     </Menu>
                 </Flex>
             </Flex>
@@ -103,7 +101,7 @@ export default function HomeNav() {
     );
 }
 
-function SubNav({ label, href, subLabel }) {
+function SubNav({label, href, subLabel}) {
     return (
         <Box
             as="a"
@@ -112,7 +110,7 @@ function SubNav({ label, href, subLabel }) {
             display="block"
             p={2}
             rounded="md"
-            _hover={{ bg: useColorModeValue('gray.200', 'gray.900') }}
+            _hover={{bg: useColorModeValue('gray.200', 'gray.900')}}
         >
             <Stack direction="row" align="center">
                 <Box>
@@ -125,7 +123,7 @@ function SubNav({ label, href, subLabel }) {
                     transition="all .3s ease"
                     transform="translateX(-10px)"
                     opacity={0}
-                    _groupHover={{ opacity: '100%', transform: 'translateX(0)' }}
+                    _groupHover={{opacity: '100%', transform: 'translateX(0)'}}
                     justify="flex-end"
                     align="center"
                     flex={1}
@@ -163,7 +161,9 @@ function Nav() {
                             </Box>
                         </PopoverTrigger>
 
-                        {navItem.children && <PopoverContent border={0} boxShadow="xl" bg={popoverContentBgColor} p={4} rounded="xl" minW="sm">
+                        {navItem.children &&
+                            <PopoverContent border={0} boxShadow="xl" bg={popoverContentBgColor} p={4} rounded="xl"
+                                            minW="sm">
                                 <Stack>
                                     {navItem.children.map(child => (
                                         <SubNav key={child.label} {...child} />
@@ -196,12 +196,12 @@ const NAV_ITEMS = [
             {
                 label: 'About Us',
                 subLabel: 'Find out more about this website',
-                href: '/about',
+                href: '/apprenticeship/about',
             },
             {
                 label: 'Feedback',
                 subLabel: 'Give us your feedback!',
-                href: '/feedback',
+                href: '/apprenticeship/feedback',
             },
         ],
     },

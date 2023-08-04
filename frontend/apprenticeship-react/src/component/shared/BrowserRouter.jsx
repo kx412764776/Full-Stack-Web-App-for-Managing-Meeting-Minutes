@@ -4,8 +4,9 @@ import Dashboard from "../../Dashboard.jsx";
 import LoginPage from "../login/LoginPage.jsx";
 import RegisterPage from "../login/RegisterPage.jsx";
 import ErrorPage from "./ErrorPage.jsx";
-import LoginAuthProvider from "../LoginContext.jsx";
+import LoginAuthProvider from "../context/LoginContext.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
+import MeetingPage from "../../MeetingPage.jsx";
 
 export const BrowserRouter = createBrowserRouter(
     [
@@ -34,9 +35,20 @@ export const BrowserRouter = createBrowserRouter(
             element:
                 <LoginAuthProvider>
                     <ProtectedRoute>
-                        <Dashboard/>
+                            <Dashboard/>
                     </ProtectedRoute>
                 </LoginAuthProvider>,
             errorElement: <ErrorPage/>
-        }]
+        },
+        {
+            path: '/apprenticeship/meeting',
+            element:
+                <LoginAuthProvider>
+                    <ProtectedRoute>
+                        <MeetingPage/>
+                    </ProtectedRoute>
+                </LoginAuthProvider>,
+            errorElement: <ErrorPage/>
+        }
+    ]
 )

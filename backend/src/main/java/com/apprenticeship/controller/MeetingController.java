@@ -1,12 +1,11 @@
 package com.apprenticeship.controller;
 
 import com.apprenticeship.dto.MeetingInfoDTO;
+import com.apprenticeship.model.MeetingTable;
 import com.apprenticeship.service.MeetingService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,6 +22,15 @@ public class MeetingController {
         this.meetingService = meetingService;
     }
 
+    // Get all meetings information
+    @GetMapping("/meetingInfoList")
+    public ResponseEntity<?> getAllMeetingInfo() {
+        List<MeetingInfoDTO> meetingInfoDTO = meetingService.getAllMeetingInfo();
+        if (meetingInfoDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(meetingInfoDTO);
+    }
 
     // Get meetings information by member email
     @PostMapping({"/{memberEmail}"})
@@ -33,6 +41,13 @@ public class MeetingController {
         }
         return ResponseEntity.ok(meetingInfoDTO);
 
+    }
+
+    // Insert meeting information to database
+    @PostMapping
+    public ResponseEntity<?> insertMeetingInfo(@RequestBody MeetingTable meetingTableInfo) {
+        MeetingTable insertMeetingInfo = meetingService.insertMeetingInfo(meetingTableInfo);
+        return new ResponseEntity<>(insertMeetingInfo, HttpStatus.CREATED);
     }
 
 }

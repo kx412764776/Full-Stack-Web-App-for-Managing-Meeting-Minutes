@@ -4,7 +4,7 @@ import {
     useEffect,
     useState
 } from "react";
-import {login as performLogin} from "../services/client.js";
+import {getMemberInfo, login as performLogin} from "../../services/client.js";
 import jwtDecode from "jwt-decode";
 
 const LoginAuthContext = createContext({});
@@ -12,29 +12,33 @@ const LoginAuthContext = createContext({});
 const LoginAuthProvider = ({children}) => {
 
     const [member, setMember] = useState(null);
-
+    const [memberInfo, setMemberInfo] = useState({});
 
     const setMemberFromToken = () => {
         let token = localStorage.getItem("access_token");
         if (token) {
             token = jwtDecode(token);
+            const memberEmail = token.sub;
             setMember({
-                username: token.sub,
+                username: memberEmail,
                 roles: token.scopes
             })
+            fetchMemberInfo(memberEmail);
         }
     }
+
+    const fetchMemberInfo = (memberEmail) => {
+        getMemberInfo(memberEmail)
+            .then((res) => setMemberInfo(res.data))
+            .catch((err) => {
+                console.error("Error fetching member info:", err);
+            });
+    };
+
     useEffect(() => {
         setMemberFromToken()
     }, [])
 
-    const memberEmail = () => {
-        let token = localStorage.getItem("access_token");
-        if (token) {
-            token = jwtDecode(token);
-            return token.sub;
-        }
-    }
 
     const login = async (usernameAndPassword) => {
         return new Promise((resolve, reject) => {
@@ -76,11 +80,12 @@ const LoginAuthProvider = ({children}) => {
     return (
         <LoginAuthContext.Provider value={{
             member,
+            memberInfo,
             login,
             logOut,
             isMemberAuthenticated,
             setMemberFromToken,
-            memberEmail
+            fetchMemberInfo
         }}>
             {children}
         </LoginAuthContext.Provider>

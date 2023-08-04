@@ -4,20 +4,19 @@ import {
     Stack,
     Button,
     Heading,
-    useColorModeValue, Link, Text,
+    useColorModeValue,
+    Link,
+    Text,
 } from '@chakra-ui/react'
 import {ArrowBackIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import {Form, Formik} from "formik";
 import * as Yup from 'yup';
-import {LoginAuth} from "../LoginContext.jsx";
-import {useNavigate} from "react-router-dom";
-import {errorNotification, successNotification} from "../../services/notification.js";
-import {MyTextInput} from "../FromComponent.jsx";
+import {LoginAuth} from "../context/LoginContext.jsx";
+import {MyTextInput} from "../FormComponent.jsx";
 import {useState} from "react";
 
 const LoginForm = () => {
     const {login} = LoginAuth();
-    const navigate = useNavigate();
 
     const [showPassword, setShowPassword] = useState(false)
 
@@ -38,13 +37,9 @@ const LoginForm = () => {
             onSubmit={(values, {setSubmitting}) => {
                 setSubmitting(true);
                 login(values).then(() => {
-                    navigate(`/apprenticeship/dashboard`)
-                    successNotification("Welcome back!", "You have successfully logged in!")
+                    window.location.href = "/apprenticeship/dashboard"
                 }).catch(err => {
-                    errorNotification(
-                        err.code,
-                        err.response.data.message
-                    )
+                    console.log(err)
                 }).finally(() => {
                     setSubmitting(false);
                 })
@@ -93,8 +88,9 @@ const LoginForm = () => {
 }
 
 export default function LoginPage() {
-    const handleBack = () => {
-        window.location.href = '/'
+    const { member } = LoginAuth();
+    if (member) {
+        window.location.href = "/apprenticeship/dashboard"
     }
 
     return (
@@ -108,7 +104,11 @@ export default function LoginPage() {
                     size="lg"
                     colorScheme="gray"
                     leftIcon={<ArrowBackIcon/>}
-                    onClick={handleBack}
+                    onClick={
+                        () => {
+                            window.location.href = "/"
+                        }
+                    }
                 >
                     Back
                 </Button>
@@ -127,7 +127,9 @@ export default function LoginPage() {
                     </Stack>
                     <Text fontSize={'sm'} color={'gray.600'} textAlign={'center'} mt={5}>
                         Don't have an account? &nbsp;
-                        <Link color={"blue.500"} href={"/register"}>
+                        <Link color={"blue.500"}
+                              onClick={() => window.location.href='/apprenticeship/register'}
+                        >
                             Sign up here!
                         </Link>
                     </Text>

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This class is for implementing the business logic of the MeetingController
@@ -56,6 +55,19 @@ public class MeetingService {
                 .map(meetingInfoDTOMapper)
                 .toList();
 
+        return meetingInfoList;
+    }
+
+    public MeetingTable insertMeetingInfo(MeetingTable meetingTableInfo) {
+        meetingRepository.save(meetingTableInfo);
+        return meetingTableInfo;
+    }
+
+    public List<MeetingInfoDTO> getAllMeetingInfo() {
+        List<MeetingInfoDTO> meetingInfoList = meetingRepository.findAll()
+                .stream()
+                .map(meetingInfoDTOMapper)
+                .toList();
         return meetingInfoList;
     }
 }

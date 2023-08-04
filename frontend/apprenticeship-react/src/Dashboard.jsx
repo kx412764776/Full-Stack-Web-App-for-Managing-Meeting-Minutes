@@ -1,11 +1,13 @@
-import HomeNav from "./component/shared/HomeNav.jsx";
+import {HomeNav} from "./component/shared/HomeNav.jsx";
 
-const Dashboard = () =>  {
+const Dashboard = () => {
+
+
     return (
         <>
-            <HomeNav/>
+            <HomeNav />
         </>
-    )
+    );
 }
 
-export default Dashboard
+export default Dashboard;

@@ -5,13 +5,9 @@ import {
     Text,
     Button
 } from '@chakra-ui/react'
-import {useNavigate} from "react-router-dom";
-
+import { Link } from 'react-router-dom';
 
 export default function WelcomePage() {
-
-    const navigate = useNavigate();
-
 
 
     return (
@@ -41,19 +37,22 @@ export default function WelcomePage() {
                 </Text>
                 <Stack spacing={6} direction={'row'}>
                     <Button
+                        as={Link}
+                        to={'/apprenticeship/login'}
                         rounded={'full'}
                         px={6}
                         colorScheme={'blue'}
                         bg={'blue.400'}
                         _hover={{bg: 'blue.600'}}
-                        onClick={() => navigate(`/apprenticeship/login`)}
+
                     >
                         Get started
                     </Button>
                     <Button
+                        as={Link}
+                        to={'/apprenticeship/register'}
                         rounded={'full'}
                         px={6}
-                        onClick={() => navigate(`/apprenticeship/register`)}
                     >
                         Sign up
                     </Button>

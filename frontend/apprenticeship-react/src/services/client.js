@@ -39,3 +39,37 @@ export const register = async (member) => {
         console.log(error);
     }
 }
+
+export const getMeetingInfo = async () => {
+    try {
+        return await axios.get(
+            `http://localhost:8090/apprenticeship/meeting/meetingInfoList`,
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getMeetingInfoByEmail = async (memberEmail) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/meeting/${memberEmail}`,
+            memberEmail,
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const saveMeeting = async (meeting) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/meeting`,
+            meeting
+        );
+    }catch (error) {
+        console.log(error);
+    }
+}
