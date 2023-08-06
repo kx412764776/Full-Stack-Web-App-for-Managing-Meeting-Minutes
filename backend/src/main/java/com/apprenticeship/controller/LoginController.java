@@ -2,6 +2,9 @@ package com.apprenticeship.controller;
 
 import com.apprenticeship.dto.MemberDTO;
 import com.apprenticeship.jwt.JWTUtil;
+import com.apprenticeship.requestsAndResponses.LoginRequest;
+import com.apprenticeship.requestsAndResponses.LoginResponse;
+import com.apprenticeship.requestsAndResponses.MemberRegistrationRequest;
 import com.apprenticeship.service.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

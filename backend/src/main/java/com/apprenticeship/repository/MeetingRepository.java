@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This interface is for accessing the database for meeting table
@@ -12,6 +13,6 @@ import java.util.List;
 @Repository("meetingJPARepository")
 public interface MeetingRepository extends JpaRepository<MeetingTable, Integer> {
 
-    List<MeetingTable> findAllByMeetingId(Integer meetingId);
+    Optional<MeetingTable> findMeetingTableByMeetingId(Integer meetingId);
 
 }

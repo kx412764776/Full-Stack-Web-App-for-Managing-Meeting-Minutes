@@ -63,11 +63,49 @@ public class MeetingService {
         return meetingTableInfo;
     }
 
+    // Get all meetings information
     public List<MeetingInfoDTO> getAllMeetingInfo() {
         List<MeetingInfoDTO> meetingInfoList = meetingRepository.findAll()
                 .stream()
                 .map(meetingInfoDTOMapper)
                 .toList();
         return meetingInfoList;
+    }
+
+    // According to the email and meetingId to insert the information to the attendee table
+    public List<AttendeeTable> insertAttendeeInfo(List<String> email, Integer meetingId) {
+        // Step1: According to the every email in the member table
+        // by separate email list to find every corresponding memberID
+        List<Member> members = email.stream()
+                .map(memberRepository::findMemberByEmail)
+                .map(member -> member.orElseThrow(() -> new ResourceNotFoundException(
+                        ("member with email [%s] not found".formatted(member))
+                )))
+                .toList();
+
+
+        // Step 2: According to the meetingId to find the corresponding meeting information
+        MeetingTable meetingTableInfo = meetingRepository.findMeetingTableByMeetingId(meetingId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ("meeting with meetingId [%s] not found".formatted(meetingId))
+                ));
+
+        //Step 3: If the attendee table already has the same meetingId and memberId, then throw exception
+        members.forEach(member -> {
+            if (attendeeRepository.existsByMemberIdAndMeetingId(member, meetingTableInfo)) {
+                throw new IllegalStateException(
+                        ("member with email [%s] already exists in meeting with meetingId [%s]"
+                                .formatted(member.getEmail(), meetingId))
+                );
+            }
+        });
+
+        // Step4: Insert the information to the attendee table
+        List<AttendeeTable> attendeeTableList = members.stream()
+                .map(member -> attendeeRepository.save(
+                        new AttendeeTable(meetingTableInfo, member)
+                ))
+                .toList();
+        return attendeeTableList;
     }
 }

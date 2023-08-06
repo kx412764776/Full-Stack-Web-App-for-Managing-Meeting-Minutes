@@ -4,6 +4,8 @@ import com.apprenticeship.dto.MemberDTO;
 import com.apprenticeship.dto.MemberDTOMapper;
 import com.apprenticeship.jwt.JWTUtil;
 import com.apprenticeship.model.Member;
+import com.apprenticeship.requestsAndResponses.LoginRequest;
+import com.apprenticeship.requestsAndResponses.LoginResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

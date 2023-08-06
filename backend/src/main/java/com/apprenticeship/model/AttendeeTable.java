@@ -70,6 +70,11 @@ public class AttendeeTable {
         this.meetingId = meetingId;
     }
 
+    public AttendeeTable(MeetingTable meetingId, Member memberId) {
+        this.meetingId = meetingId;
+        this.memberId = memberId;
+    }
+
     public Integer getAttendeeTableId() {
         return attendeeTableId;
     }

@@ -1,7 +1,9 @@
 package com.apprenticeship.controller;
 
 import com.apprenticeship.dto.MeetingInfoDTO;
+import com.apprenticeship.model.AttendeeTable;
 import com.apprenticeship.model.MeetingTable;
+import com.apprenticeship.requestsAndResponses.addAttendeeRequest;
 import com.apprenticeship.service.MeetingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,5 +51,18 @@ public class MeetingController {
         MeetingTable insertMeetingInfo = meetingService.insertMeetingInfo(meetingTableInfo);
         return new ResponseEntity<>(insertMeetingInfo, HttpStatus.CREATED);
     }
+
+    // According to the member email and meeting id to insert attendee information to database
+    @PostMapping("/attendee")
+    public ResponseEntity<?> insertAttendeeInfo(@RequestBody addAttendeeRequest addAttendeeRequest) {
+        System.out.println("Received request: " + addAttendeeRequest.toString());
+        List<AttendeeTable> attendeeTables =
+                meetingService.insertAttendeeInfo(addAttendeeRequest.emails(), addAttendeeRequest.meetingId());
+        if (attendeeTables == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(HttpStatus.CREATED);
+    }
+
 
 }

@@ -1,4 +1,4 @@
-package com.apprenticeship.service;
+package com.apprenticeship.requestsAndResponses;
 
 public record MemberRegistrationRequest(
         String firstName,

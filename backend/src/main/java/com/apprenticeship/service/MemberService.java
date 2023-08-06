@@ -6,6 +6,7 @@ import com.apprenticeship.exception.DuplicateResourceException;
 import com.apprenticeship.exception.ResourceNotFoundException;
 import com.apprenticeship.model.Member;
 import com.apprenticeship.repository.MemberRepository;
+import com.apprenticeship.requestsAndResponses.MemberRegistrationRequest;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
