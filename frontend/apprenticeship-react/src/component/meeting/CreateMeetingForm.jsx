@@ -38,19 +38,12 @@ const CreateMeetingForm = () => {
                 })
                     .then(res => {
                         console.log(res);
-                        notification.success({
-                            message: "Meeting created",
-                            description: `${meeting.meetingName} was successfully created`
-                        })
 
                     }).catch(err => {
                     console.log(err);
-                    notification.error({
-                        message: err.code,
-                        description: err.response.data.message
-                    })
                 }).finally(() => {
                     setSubmitting(false);
+                    window.location.reload();
                 })
             }}
         >

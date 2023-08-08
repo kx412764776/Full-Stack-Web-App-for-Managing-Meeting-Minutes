@@ -52,6 +52,7 @@ const LoginAuthProvider = ({children}) => {
                     username: decodedToken.sub,
                     roles: decodedToken.scopes
                 })
+
                 resolve(res);
             }).catch(err => {
                 reject(err);

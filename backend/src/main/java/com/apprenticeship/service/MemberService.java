@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * This class is responsible for handling the business logic of controlling members in the database.
  */
@@ -71,4 +74,19 @@ public class MemberService {
     }
 
 
+    public List<MemberDTO> getAllMemberInfo() {
+        return memberRepository.findAll()
+                .stream()
+                .map(memberDTOMapper)
+                .toList();
+    }
+
+    // check if email exists in database and return email and first name
+    public List<String> checkMembersByEmailPrefix(String emailPrefix) {
+        List<Member> members = memberRepository.findTop10ByEmailStartingWith(emailPrefix);
+        // joint email and first name and return
+        return members.stream()
+                .map(member -> member.getEmail() + " " + member.getFirstName())
+                .toList();
+    }
 }

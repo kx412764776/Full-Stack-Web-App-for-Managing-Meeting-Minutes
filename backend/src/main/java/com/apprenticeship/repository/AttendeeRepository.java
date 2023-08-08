@@ -17,4 +17,9 @@ public interface AttendeeRepository extends JpaRepository<AttendeeTable, Integer
 
     List<AttendeeTable> findAllByMemberId(Member member);
     boolean existsByMemberIdAndMeetingId(Member member, MeetingTable meetingTable);
+
+    // get all attendees by meeting id
+    List<AttendeeTable> findAllByMeetingId(MeetingTable meetingTable);
+
+    void deleteDistinctByMemberIdAndMeetingId(Member member, MeetingTable meetingTableInfo);
 }

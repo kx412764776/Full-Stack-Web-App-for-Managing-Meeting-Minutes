@@ -1,6 +1,7 @@
 package com.apprenticeship.controller;
 
 import com.apprenticeship.dto.MeetingInfoDTO;
+import com.apprenticeship.exception.ResourceNotFoundException;
 import com.apprenticeship.model.AttendeeTable;
 import com.apprenticeship.model.MeetingTable;
 import com.apprenticeship.requestsAndResponses.addAttendeeRequest;
@@ -20,7 +21,7 @@ public class MeetingController {
 
     private final MeetingService meetingService;
 
-    public MeetingController( MeetingService meetingService) {
+    public MeetingController(MeetingService meetingService) {
         this.meetingService = meetingService;
     }
 
@@ -36,7 +37,8 @@ public class MeetingController {
 
     // Get meetings information by member email
     @PostMapping({"/{memberEmail}"})
-    public ResponseEntity<?> getMeetingInfoByMemberEmail(@PathVariable String memberEmail) {
+    public ResponseEntity<?> getMeetingInfoByMemberEmail(
+            @PathVariable("memberEmail") String memberEmail) {
         List<MeetingInfoDTO> meetingInfoDTO = meetingService.getMeetingInfoByMemberEmail(memberEmail);
         if (meetingInfoDTO == null) {
             return ResponseEntity.notFound().build();
@@ -55,14 +57,39 @@ public class MeetingController {
     // According to the member email and meeting id to insert attendee information to database
     @PostMapping("/attendee")
     public ResponseEntity<?> insertAttendeeInfo(@RequestBody addAttendeeRequest addAttendeeRequest) {
-        System.out.println("Received request: " + addAttendeeRequest.toString());
-        List<AttendeeTable> attendeeTables =
-                meetingService.insertAttendeeInfo(addAttendeeRequest.emails(), addAttendeeRequest.meetingId());
-        if (attendeeTables == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        try {
+            meetingService.insertAttendeeInfo(
+                    addAttendeeRequest.emails().stream().toList(),
+                    addAttendeeRequest.meetingId());
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Invalid request: " + e.getMessage());
         }
-        return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
+    // Get member info from memberId in attendee Table according to meetingId
+    @PostMapping("/attendee/{meetingId}")
+    public ResponseEntity<?> getMemberInfoByMeetingId(
+            @PathVariable("meetingId") Integer meetingId) {
+        List<String> attendeeInfoByMeetingId = meetingService.getAttendeeInfoByMeetingId(meetingId);
+        if (attendeeInfoByMeetingId == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(attendeeInfoByMeetingId);
+    }
+
+    // Remove attendee from attendee table
+    @DeleteMapping("/attendee/{meetingId}/{memberEmails}")
+    public ResponseEntity<?> removeAttendeeFromAttendeeTable(
+            @PathVariable("meetingId") Integer meetingId,
+            @PathVariable("memberEmails") List<String> memberEmails) {
+        try {
+            meetingService.removeAttendeeFromAttendeeTable(meetingId, memberEmails);
+            return ResponseEntity.ok().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 }

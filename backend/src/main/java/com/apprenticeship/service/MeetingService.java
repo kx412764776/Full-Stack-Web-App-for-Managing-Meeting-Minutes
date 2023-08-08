@@ -11,6 +11,7 @@ import com.apprenticeship.repository.MeetingRepository;
 import com.apprenticeship.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -107,5 +108,61 @@ public class MeetingService {
                 ))
                 .toList();
         return attendeeTableList;
+    }
+
+    // According to the meetingId to get the attendee information
+    public List<String> getAttendeeInfoByMeetingId(Integer meetingId) {
+        // According to the meetingId to find the corresponding meeting information
+        MeetingTable meetingTableInfo = meetingRepository.findMeetingTableByMeetingId(meetingId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ("meeting with meetingId [%s] not found".formatted(meetingId))
+                ));
+
+        // According to the meetingId to find the corresponding attendee information
+        List<Member> attendeeInfoList = attendeeRepository.findAllByMeetingId(meetingTableInfo)
+                .stream()
+                .map(AttendeeTable::getMemberId)
+                .toList();
+
+        // According to the attendee information to get the email, firstName and lastName
+        List<String> attendeeInfo = attendeeInfoList.stream()
+                .map(member ->
+                        member.getEmail() + "," +
+                        member.getFirstName() + " " +
+                        member.getLastName() + "(" +
+                        member.getMemberRole() + ")" )
+                .toList();
+
+        return attendeeInfo;
+    }
+
+    // According to the meetingId and memberEmails to delete the information from the attendee table
+    @Transactional
+    public void removeAttendeeFromAttendeeTable(Integer meetingId, List<String> memberEmails) {
+        // According to memberEmails to find the corresponding memberID
+        List<Member> members = memberEmails.stream()
+                .map(memberRepository::findMemberByEmail)
+                .map(member -> member.orElseThrow(() -> new ResourceNotFoundException(
+                        ("member with email [%s] not found".formatted(member))
+                )))
+                .toList();
+
+        // According to the meetingId to find the corresponding meeting information
+        MeetingTable meetingTableInfo = meetingRepository.findMeetingTableByMeetingId(meetingId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ("meeting with meetingId [%s] not found".formatted(meetingId))
+                ));
+
+        // According to the meetingId and memberId to delete the information from the attendee table
+        members.forEach(member -> {
+            if (!attendeeRepository.existsByMemberIdAndMeetingId(member, meetingTableInfo)) {
+                throw new IllegalStateException(
+                        ("member with email [%s] not exists in meeting with meetingId [%s]"
+                                .formatted(member.getEmail(), meetingId))
+                );
+            }
+            attendeeRepository.deleteDistinctByMemberIdAndMeetingId(member, meetingTableInfo);
+        });
+
     }
 }

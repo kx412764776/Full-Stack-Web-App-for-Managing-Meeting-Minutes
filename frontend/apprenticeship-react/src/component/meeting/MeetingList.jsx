@@ -2,30 +2,39 @@ import {useEffect, useState} from 'react';
 import {getMeetingInfo, getMeetingInfoByEmail} from "../../services/client.js";
 import {LoginAuth} from "../context/LoginContext.jsx";
 import Highlighter from 'react-highlight-words';
-import {Button, Input, Space, Table} from 'antd';
+import {Button, Drawer, Input, Space, Table} from 'antd';
 import {SearchOutlined} from '@ant-design/icons';
+import AddParticipantForm from "./AddParticipantForm.jsx";
+import ViewParticipantDrawer from "./ViewParticipantDrawer.jsx";
 
-const MeetingList = () =>  {
+const MeetingList = () => {
 
-    const { memberInfo } = LoginAuth();
+    const {memberInfo} = LoginAuth();
 
     const [meetingInfoList, setMeetingInfoList] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
+    const [drawerVisible, setDrawerVisible] = useState(false);
+    const [selectedMeetingId, setSelectedMeetingId] = useState(null);
+    const [selectedDrawer, setSelectedDrawer] = useState('addParticipants');
 
+    const onClose = () => {
+        setDrawerVisible(false);
+    }
+
+    // Handle adding participant
 
     useEffect(() => {
         const fetchMeetingInfo = async () => {
             try {
                 let res;
-                console.log(memberInfo.memberRole);
-                if (memberInfo.role === 'ACADEMIC') {
+                console.log(memberInfo.memberRoles);
+                if (memberInfo.memberRoles == 'ACADEMIC') {
                     res = await getMeetingInfo();
                 } else {
                     const memberEmail = memberInfo.email;
                     res = await getMeetingInfoByEmail(memberEmail);
                 }
-                console.log(res.data);
                 setMeetingInfoList(res.data);
             } catch (err) {
                 console.log(err);
@@ -35,33 +44,33 @@ const MeetingList = () =>  {
     }, [memberInfo]);
 
     const getColumnSearchProps = (dataIndex) => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-            <div style={{ padding: 8 }}>
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
+            <div style={{padding: 8}}>
                 <Input
                     id="searchInput"
                     placeholder={`Search ${dataIndex}`}
                     value={selectedKeys[0]}
                     onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                    style={{ marginBottom: 8, display: 'block' }}
+                    style={{marginBottom: 8, display: 'block'}}
                 />
                 <Space>
                     <Button
                         type="primary"
                         onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                        icon={<SearchOutlined />}
+                        icon={<SearchOutlined/>}
                         size="small"
-                        style={{ width: 90 }}
+                        style={{width: 90}}
                     >
                         Search
                     </Button>
-                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{width: 90}}>
                         Reset
                     </Button>
                 </Space>
             </div>
         ),
-        filterIcon: (filtered) => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        filterIcon: (filtered) => <SearchOutlined style={{color: filtered ? '#1890ff' : undefined}}/>,
         onFilter: (value, record) =>
             record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
         onFilterDropdownOpenChange: (visible) => {
@@ -72,7 +81,7 @@ const MeetingList = () =>  {
         render: (text) =>
             searchedColumn === dataIndex ? (
                 <Highlighter
-                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                    highlightStyle={{backgroundColor: '#ffc069', padding: 0}}
                     searchWords={[searchText]}
                     autoEscape
                     textToHighlight={text.toString()}
@@ -102,15 +111,16 @@ const MeetingList = () =>  {
     const columns = meetingInfoList.length > 0 ? Object.keys(meetingInfoList[0]).slice(1).map((key) => ({
         title: formatKey(key),
         dataIndex: key,
+
         //
         sorter: (a, b) => {
             const valueA = a[key];
             const valueB = b[key];
             if (typeof valueA === 'string') {
                 return valueA.localeCompare(valueB);
-            }else if (key === 'meetingDate') {
+            } else if (key === 'meetingDate') {
                 return new Date(valueA) - new Date(valueB);
-            }else {
+            } else {
                 return valueA - valueB;
             }
         },
@@ -119,66 +129,105 @@ const MeetingList = () =>  {
 
     // If Login member is ACADEMIC,
     // add columns for adding meeting minutes, add participants and edit meeting info
-    if (memberInfo.role === 'ACADEMIC') {
-        columns.push([
+    if (memberInfo.memberRoles == 'ACADEMIC') {
+        columns.push(
             {
                 title: 'Meeting Minutes',
                 dataIndex: 'meetingMinutes',
                 render: () => (
-                    <Button
-                        type="primary"
-                        onClick={() => {
-                            //TODO: redirect to meeting minutes page
-                            window.location.href = ``;
-                        }}
-                    >
-                        Add Meeting Minutes
-                    </Button>
+                    <Space direction={"vertical"}>
+                        <Button
+                            type="primary"
+                            onClick={() => {
+                                //TODO: redirect to meeting minutes page
+                                window.location.href = ``;
+                            }}
+                        >
+                            Add Meeting Minutes
+                        </Button>
+                        <Button
+                            type="primary"
+                            onClick={() => {
+                                // TODO: View meeting minutes
+                                window.location.href = ``;
+                            }}
+                        >
+                            View Meeting Minutes
+                        </Button>
+                    </Space>
                 )
             },
             {
                 title: 'Participants',
                 dataIndex: 'participants',
-                render: () => (
-                    <Space>
-                        <Button
-                            type="primary"
-                            onClick={() => {
-                                //TODO: Add participants
-                                window.location.href = ``;
-                            }}
-                        >
-                            Add Participants
-                        </Button>
-                        <Button
-                            type="primary"
-                            onClick={() => {
-                                //TODO: view participants
-                                window.location.href = ``;
-                            }}
-                        >
-                            View Participants
-                        </Button>
-                    </Space>
-                )
+                render: (_, record) => {
+                    return (
+                        <Space direction={"vertical"}>
+                            <Button
+                                type="primary"
+                                onClick={() => {
+                                    setDrawerVisible(true)
+                                    setSelectedMeetingId(record.meetingId)
+                                    setSelectedDrawer('addParticipants');
+                                }}
+                            >
+                                Add Participants
+                            </Button>
+                            <Button
+                                type="primary"
+                                onClick={() => {
+                                    setDrawerVisible(true)
+                                    setSelectedMeetingId(record.meetingId)
+                                    setSelectedDrawer('viewParticipants');
+                                }}
+                            >
+                                View Participants
+                            </Button>
+                        </Space>
+                    );
+                }
             }
-        ])
+        )
     }
 
-    // change the format of memberDate
+    // change the format of meetingDate
     const modifiedData = meetingInfoList.map(item => {
-        const { meetingDate, ...rest } = item;
+        const {meetingDate, ...rest} = item;
         let date = new Date(meetingDate);
-        const modifiedMemberDate =
+        // format the date to dd/mm/yyyy hh:mm:ss
+        const modifiedMeetingDate =
             date.toLocaleString().split(',')[0] + ' ' + date.toLocaleString().split(',')[1];
-        return { ...rest, meetingDate: modifiedMemberDate };
+        return {...rest, meetingDate: modifiedMeetingDate};
     });
 
     const modifiedDataWithKey =
         modifiedData.map((row, index) =>
-            ({ ...row, key: row[0] || index }));
+            ({...row, key: row[0] || index}));
 
-    return <Table columns={columns} dataSource={modifiedDataWithKey} />;
+    return (
+    <>
+        <Table columns={columns} dataSource={modifiedDataWithKey}/>
+        <Drawer
+            title={selectedDrawer === 'addParticipants' ? 'Add Participants' : 'View Participants'}
+            width={400}
+            onClose={onClose}
+            open={drawerVisible}
+            bodyStyle={{paddingBottom: 80}}
+        >
+            {selectedDrawer === 'addParticipants' ? (
+                <AddParticipantForm
+                    selectedMeetingId={selectedMeetingId}
+                    onClose={onClose}
+                />
+            ) : (
+                <ViewParticipantDrawer
+                    selectedMeetingId={selectedMeetingId}
+                    onClose={onClose}
+                />
+            )}
+        </Drawer>
+    </>
+    )
 }
 
 export default MeetingList;

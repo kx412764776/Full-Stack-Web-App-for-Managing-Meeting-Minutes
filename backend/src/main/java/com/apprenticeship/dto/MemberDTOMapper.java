@@ -20,7 +20,6 @@ public class MemberDTOMapper implements Function<Member, MemberDTO> {
                 member.getFirstName(),
                 member.getLastName(),
                 member.getEmail(),
-                member.getPassword(),
                 member.getAuthorities()
                         .stream()
                         .map(GrantedAuthority::getAuthority)

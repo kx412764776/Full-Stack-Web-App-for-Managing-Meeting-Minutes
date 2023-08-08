@@ -7,7 +7,6 @@ public record MemberDTO(
         String firstName,
         String lastName,
         String email,
-        String password,
         List<String> memberRoles,
         String username
 ) {

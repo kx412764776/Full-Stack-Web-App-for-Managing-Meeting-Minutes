@@ -21,7 +21,7 @@ const MeetingPage = () => {
             <Space direction="vertical"
                    style={{width: '100%', marginTop: '10px'}}
             >
-                {memberInfo?.memberRole === "ACADEMIC" && (
+                {memberInfo.memberRoles == "ACADEMIC" && (
                     <Button type="primary" icon={<PlusOutlined />} onClick={toggleForm}>
                         Create new meeting
                     </Button>

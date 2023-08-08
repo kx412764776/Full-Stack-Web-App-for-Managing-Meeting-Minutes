@@ -46,13 +46,4 @@ public class LoginController {
                 .build();
     }
 
-    @PostMapping("/memberInfo/{memberEmail}")
-    public ResponseEntity<?> getMemberByEmail(
-            @PathVariable("memberEmail") String email) {
-        MemberDTO memberDTO = memberService.getMemberByEmail(email);
-        if (memberDTO == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(memberDTO);
-    }
 }

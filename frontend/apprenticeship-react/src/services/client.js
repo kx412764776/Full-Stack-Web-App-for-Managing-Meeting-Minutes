@@ -6,25 +6,13 @@ const getAuthConfig = () => ({
     }
 })
 
-export const getMemberInfo= async (memberEmail) => {
-    try {
-        return await axios.post(
-            `http://localhost:8090/apprenticeship/memberInfo/${memberEmail}`,
-            memberEmail,
-            getAuthConfig()
-        )
-    } catch (error) {
-        console.log(error);
-    }
-}
-
 export const login = async (usernameAndPassword) => {
     try {
         return await axios.post(
             `http://localhost:8090/apprenticeship/login`,
             usernameAndPassword
         );
-    }catch (error) {
+    } catch (error) {
         console.log(error);
     }
 }
@@ -35,7 +23,41 @@ export const register = async (member) => {
             `http://localhost:8090/apprenticeship/register`,
             member
         );
-    }catch (error) {
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getMemberInfo = async (memberEmail) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/member/memberInfo/${memberEmail}`,
+            memberEmail,
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getAllMemberInfo = async () => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/member/memberInfo`,
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const checkMemberByEmail = async (memberEmailPrefix) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/member/checkMember/${memberEmailPrefix}`,
+            memberEmailPrefix,
+            getAuthConfig()
+        )
+    } catch (error) {
         console.log(error);
     }
 }
@@ -69,7 +91,45 @@ export const saveMeeting = async (meeting) => {
             `http://localhost:8090/apprenticeship/meeting`,
             meeting
         );
-    }catch (error) {
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const addParticipantAndMeetingToAttendeeTable = async (emails, meetingId) => {
+    const insertAttendee = {
+        emails: emails,
+        meetingId: meetingId
+    };
+    try {
+        return await axios.post(
+            'http://localhost:8090/apprenticeship/meeting/attendee',
+            insertAttendee
+        );
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getAttendeeInfoByMeetingId = async (meetingId) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/meeting/attendee/${meetingId}`,
+            meetingId,
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const deleteAttendeeInfoByMeetingIdAndEmail = async (meetingId, memberEmails) => {
+    try {
+
+        return await axios.delete(
+            `http://localhost:8090/apprenticeship/meeting/attendee/${meetingId}/${memberEmails}`,
+            getAuthConfig()
+        )
+    } catch (error) {
         console.log(error);
     }
 }
