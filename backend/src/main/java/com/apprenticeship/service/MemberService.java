@@ -7,6 +7,7 @@ import com.apprenticeship.exception.ResourceNotFoundException;
 import com.apprenticeship.model.Member;
 import com.apprenticeship.repository.MemberRepository;
 import com.apprenticeship.requestsAndResponses.MemberRegistrationRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     public MemberService(
-            @Qualifier("memberJPARepository") MemberRepository memberRepository,
+            MemberRepository memberRepository,
             MemberDTOMapper memberDTOMapper,
             PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;

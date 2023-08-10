@@ -27,7 +27,6 @@ public class MeetingService {
 
     private final MeetingInfoDTOMapper meetingInfoDTOMapper;
 
-    @Autowired
     public MeetingService(MeetingRepository meetingRepository,
                           MemberRepository memberRepository,
                           AttendeeRepository attendeeRepository,
@@ -164,5 +163,22 @@ public class MeetingService {
             attendeeRepository.deleteDistinctByMemberIdAndMeetingId(member, meetingTableInfo);
         });
 
+    }
+
+    public MeetingInfoDTO getMeetingInfoByMeetingId(Integer meetingId) {
+        MeetingTable meetingTableInfo = meetingRepository.findMeetingTableByMeetingId(meetingId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ("meeting with meetingId [%s] not found".formatted(meetingId))
+                ));
+        MeetingInfoDTO meetingInfoDTO = meetingInfoDTOMapper.apply(meetingTableInfo);
+        return meetingInfoDTO;
+    }
+
+    public MeetingTable getMeetingInfoById(Integer meetingId) {
+        MeetingTable meetingTableInfo = meetingRepository.findMeetingTableByMeetingId(meetingId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ("meeting with meetingId [%s] not found".formatted(meetingId))
+                ));
+        return meetingTableInfo;
     }
 }

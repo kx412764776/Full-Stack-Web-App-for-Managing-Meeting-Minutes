@@ -2,6 +2,7 @@ package com.apprenticeship.model;
 
 import jakarta.persistence.*;
 
+import java.sql.Clob;
 import java.util.Objects;
 
 /**
@@ -48,11 +49,11 @@ public class MinutesTable {
     )
     private String minutesFilename;
 
-    // file path to the minutes file
+    // Store the minutes file in the database
     @Column(
-            nullable = false
+            columnDefinition = "TEXT"
     )
-    private String minutesFilepath;
+    private String minutesContent;
 
     public MinutesTable() {
     }
@@ -60,19 +61,29 @@ public class MinutesTable {
     public MinutesTable(Integer minutesId,
                         MeetingTable meetingId,
                         String minutesFilename,
-                        String minutesFilepath) {
+                        String minutesContent) {
         this.minutesId = minutesId;
         this.meetingId = meetingId;
         this.minutesFilename = minutesFilename;
-        this.minutesFilepath = minutesFilepath;
+        this.minutesContent = minutesContent;
     }
+
+
 
     public MinutesTable(MeetingTable meetingId,
                         String minutesFilename,
-                        String minutesFilepath) {
+                        String minutesContent) {
         this.meetingId = meetingId;
         this.minutesFilename = minutesFilename;
-        this.minutesFilepath = minutesFilepath;
+        this.minutesContent = minutesContent;
+    }
+
+    public String getMinutesContent() {
+        return minutesContent;
+    }
+
+    public void setMinutesContent(String minutesContent) {
+        this.minutesContent = minutesContent;
     }
 
     public Integer getMinutesId() {
@@ -99,34 +110,5 @@ public class MinutesTable {
         this.minutesFilename = minutesFilename;
     }
 
-    public String getMinutesFilepath() {
-        return minutesFilepath;
-    }
 
-    public void setMinutesFilepath(String minutesFilepath) {
-        this.minutesFilepath = minutesFilepath;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MinutesTable that = (MinutesTable) o;
-        return Objects.equals(minutesId, that.minutesId) && Objects.equals(meetingId, that.meetingId) && Objects.equals(minutesFilename, that.minutesFilename) && Objects.equals(minutesFilepath, that.minutesFilepath);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(minutesId, meetingId, minutesFilename, minutesFilepath);
-    }
-
-    @Override
-    public String toString() {
-        return "MinutesTable{" +
-               "minutesId=" + minutesId +
-               ", meetingId=" + meetingId +
-               ", minutesFilename='" + minutesFilename + '\'' +
-               ", minutesFilepath='" + minutesFilepath + '\'' +
-               '}';
-    }
 }

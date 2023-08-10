@@ -2,9 +2,8 @@ package com.apprenticeship.controller;
 
 import com.apprenticeship.dto.MeetingInfoDTO;
 import com.apprenticeship.exception.ResourceNotFoundException;
-import com.apprenticeship.model.AttendeeTable;
 import com.apprenticeship.model.MeetingTable;
-import com.apprenticeship.requestsAndResponses.addAttendeeRequest;
+import com.apprenticeship.requestsAndResponses.AddAttendeeRequest;
 import com.apprenticeship.service.MeetingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +34,17 @@ public class MeetingController {
         return ResponseEntity.ok(meetingInfoDTO);
     }
 
+    // Get meeting information by meeting id
+    @PostMapping("/meetingInfo/{meetingId}")
+    public ResponseEntity<?> getMeetingInfoByMeetingId(
+            @PathVariable("meetingId") Integer meetingId) {
+        MeetingInfoDTO meetingInfoDTO = meetingService.getMeetingInfoByMeetingId(meetingId);
+        if (meetingInfoDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(meetingInfoDTO);
+    }
+
     // Get meetings information by member email
     @PostMapping({"/{memberEmail}"})
     public ResponseEntity<?> getMeetingInfoByMemberEmail(
@@ -56,7 +66,7 @@ public class MeetingController {
 
     // According to the member email and meeting id to insert attendee information to database
     @PostMapping("/attendee")
-    public ResponseEntity<?> insertAttendeeInfo(@RequestBody addAttendeeRequest addAttendeeRequest) {
+    public ResponseEntity<?> insertAttendeeInfo(@RequestBody AddAttendeeRequest addAttendeeRequest) {
         try {
             meetingService.insertAttendeeInfo(
                     addAttendeeRequest.emails().stream().toList(),

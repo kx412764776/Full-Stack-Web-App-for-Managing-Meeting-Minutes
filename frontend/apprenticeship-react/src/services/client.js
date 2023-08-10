@@ -73,6 +73,17 @@ export const getMeetingInfo = async () => {
     }
 }
 
+export const getMeetingInfoByMeetingId = async (meetingId) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/meeting/meetingInfo/${meetingId}`,
+            meetingId,
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export const getMeetingInfoByEmail = async (memberEmail) => {
     try {
         return await axios.post(
@@ -124,9 +135,35 @@ export const getAttendeeInfoByMeetingId = async (meetingId) => {
 
 export const deleteAttendeeInfoByMeetingIdAndEmail = async (meetingId, memberEmails) => {
     try {
-
         return await axios.delete(
             `http://localhost:8090/apprenticeship/meeting/attendee/${meetingId}/${memberEmails}`,
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const insertOrUpdateMinutesByMeetingId = async (meetingId, minutesContent) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/minutes/${meetingId}`,
+            {meetingId, minutesContent},
+            {
+                ...getAuthConfig(),
+                'Content-Type': 'application/json'
+            }
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getMinutesByMeetingId = async (meetingId) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/minutes/meetingId/${meetingId}`,
+            meetingId,
             getAuthConfig()
         )
     } catch (error) {

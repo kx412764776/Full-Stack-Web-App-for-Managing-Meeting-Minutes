@@ -1,6 +1,5 @@
 package com.apprenticeship.security;
 
-import com.apprenticeship.jwt.JWTFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,7 +22,6 @@ public class SecurityFilterChainConfig {
 
     private final AuthenticationProvider authenticationProvider;
     private final AuthenticationEntryPoint authenticationEntryPoint;
-
     private final JWTFilter jwtFilter;
 
     public SecurityFilterChainConfig(AuthenticationProvider authenticationProvider,

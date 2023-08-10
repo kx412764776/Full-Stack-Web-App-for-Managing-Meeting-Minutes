@@ -7,6 +7,7 @@ import ErrorPage from "./ErrorPage.jsx";
 import LoginAuthProvider from "../context/LoginContext.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import MeetingPage from "../../MeetingPage.jsx";
+import AddMinutesPage from "../minutes/AddMinutesPage.jsx";
 
 export const BrowserRouter = createBrowserRouter(
     [
@@ -48,6 +49,15 @@ export const BrowserRouter = createBrowserRouter(
                         <MeetingPage/>
                     </ProtectedRoute>
                 </LoginAuthProvider>,
+            errorElement: <ErrorPage/>,
+        },
+        {
+            path: '/apprenticeship/meeting/:meetingId/minutes',
+            element: <LoginAuthProvider>
+                <ProtectedRoute>
+                    <AddMinutesPage/>
+                </ProtectedRoute>
+            </LoginAuthProvider>,
             errorElement: <ErrorPage/>
         }
     ]

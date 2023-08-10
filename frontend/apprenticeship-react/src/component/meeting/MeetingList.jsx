@@ -134,16 +134,15 @@ const MeetingList = () => {
             {
                 title: 'Meeting Minutes',
                 dataIndex: 'meetingMinutes',
-                render: () => (
+                render: (_, record) => (
                     <Space direction={"vertical"}>
                         <Button
                             type="primary"
                             onClick={() => {
-                                //TODO: redirect to meeting minutes page
-                                window.location.href = ``;
+                                window.location.href = (`/apprenticeship/meeting/${record.meetingId}/minutes`);
                             }}
                         >
-                            Add Meeting Minutes
+                            Edit Meeting Minutes
                         </Button>
                         <Button
                             type="primary"

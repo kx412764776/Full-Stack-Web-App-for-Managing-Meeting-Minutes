@@ -1,5 +1,6 @@
-package com.apprenticeship.jwt;
+package com.apprenticeship.security;
 
+import com.apprenticeship.utils.JWTUtil;
 import com.apprenticeship.service.MemberDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

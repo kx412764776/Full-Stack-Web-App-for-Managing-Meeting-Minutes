@@ -2,7 +2,7 @@ package com.apprenticeship.service;
 
 import com.apprenticeship.dto.MemberDTO;
 import com.apprenticeship.dto.MemberDTOMapper;
-import com.apprenticeship.jwt.JWTUtil;
+import com.apprenticeship.utils.JWTUtil;
 import com.apprenticeship.model.Member;
 import com.apprenticeship.requestsAndResponses.LoginRequest;
 import com.apprenticeship.requestsAndResponses.LoginResponse;

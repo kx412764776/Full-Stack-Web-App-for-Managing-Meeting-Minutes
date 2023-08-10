@@ -1,4 +1,4 @@
-package com.apprenticeship.jwt;
+package com.apprenticeship.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
