@@ -147,8 +147,7 @@ const MeetingList = () => {
                         <Button
                             type="primary"
                             onClick={() => {
-                                // TODO: View meeting minutes
-                                window.location.href = ``;
+                                window.location.href = (`/apprenticeship/meeting/${record.meetingId}/minutesInfo`);
                             }}
                         >
                             View Meeting Minutes
@@ -183,6 +182,41 @@ const MeetingList = () => {
                                 View Participants
                             </Button>
                         </Space>
+                    );
+                }
+            }
+        )
+    } else if (memberInfo.memberRoles == 'APPRENTICE' || memberInfo.memberRoles == 'MENTOR') {
+        columns.push(
+            {
+                title: 'Meeting Minutes',
+                dataIndex: 'meetingMinutes',
+                render: (_, record) => (
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            window.location.href = (`/apprenticeship/meeting/${record.meetingId}/minutesInfo`);
+                        }}
+                    >
+                        View Meeting Minutes
+                    </Button>
+                )
+            },
+            {
+                title: 'Participants',
+                dataIndex: 'participants',
+                render: (_, record) => {
+                    return (
+                        <Button
+                            type="primary"
+                            onClick={() => {
+                                setDrawerVisible(true)
+                                setSelectedMeetingId(record.meetingId)
+                                setSelectedDrawer('viewParticipants');
+                            }}
+                        >
+                            View Participants
+                        </Button>
                     );
                 }
             }

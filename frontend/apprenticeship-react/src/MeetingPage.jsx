@@ -22,7 +22,12 @@ const MeetingPage = () => {
                    style={{width: '100%', marginTop: '10px'}}
             >
                 {memberInfo.memberRoles == "ACADEMIC" && (
-                    <Button type="primary" icon={<PlusOutlined />} onClick={toggleForm}>
+                    <Button
+                        style={{marginLeft: '10px'}}
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={toggleForm}
+                    >
                         Create new meeting
                     </Button>
                 )}

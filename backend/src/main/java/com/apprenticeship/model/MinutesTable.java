@@ -2,8 +2,6 @@ package com.apprenticeship.model;
 
 import jakarta.persistence.*;
 
-import java.sql.Clob;
-import java.util.Objects;
 
 /**
  * This class is a model for the Minutes table to store meeting minutes in the database.

@@ -1,7 +1,7 @@
 import {Formik} from "formik";
 import * as Yup from "yup";
 import {saveMeeting} from "../../services/client.js";
-import {Button, DatePicker, Form, Input, notification, Space} from 'antd';
+import {Button, DatePicker, Form, Input, Space} from 'antd';
 
 const CreateMeetingForm = () => {
 

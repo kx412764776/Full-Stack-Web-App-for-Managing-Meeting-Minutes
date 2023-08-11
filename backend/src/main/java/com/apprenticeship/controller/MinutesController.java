@@ -1,7 +1,6 @@
 package com.apprenticeship.controller;
 
 import com.apprenticeship.requestsAndResponses.AddMinutesContentRequest;
-import com.apprenticeship.service.MeetingService;
 import com.apprenticeship.service.MinutesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
