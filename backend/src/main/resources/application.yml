@@ -24,4 +24,16 @@ spring:
     show-sql: true
   main:
     web-application-type: servlet
+  # smtp settings
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: apprenticeship.server@gmail.com
+    password: slgyf0226**
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
