@@ -1,6 +1,9 @@
 package com.apprenticeship.model;
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 /**
  * Notification entity class to be used for sending notifications to members of the meeting.
@@ -65,7 +68,8 @@ public class Notification {
     @Column(
             nullable = false
     )
-    private String notificationPostDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date notificationPostDate;
 
     // notificationStatus is if the notification has been sent successfully or not
     // 0 = not sent, 1 = sent
@@ -82,7 +86,7 @@ public class Notification {
                         Member memberEmail,
                         String notificationSubject,
                         String notificationContent,
-                        String notificationPostDate,
+                        Date notificationPostDate,
                         Integer notificationStatus) {
         this.notificationId = notificationId;
         this.meetingId = meetingId;
@@ -97,7 +101,7 @@ public class Notification {
                          Member memberEmail,
                          String notificationSubject,
                          String notificationContent,
-                         String notificationPostDate,
+                         Date notificationPostDate,
                          Integer notificationStatus) {
         this.meetingId = meetingId;
         this.memberEmail = memberEmail;
@@ -147,11 +151,11 @@ public class Notification {
         this.notificationContent = notificationContent;
     }
 
-    public String getNotificationPostDate() {
+    public Date getNotificationPostDate() {
         return notificationPostDate;
     }
 
-    public void setNotificationPostDate(String notificationPostDate) {
+    public void setNotificationPostDate(Date notificationPostDate) {
         this.notificationPostDate = notificationPostDate;
     }
 

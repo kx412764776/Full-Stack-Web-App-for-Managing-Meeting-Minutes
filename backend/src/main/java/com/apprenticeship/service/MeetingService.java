@@ -9,7 +9,6 @@ import com.apprenticeship.model.Member;
 import com.apprenticeship.repository.AttendeeRepository;
 import com.apprenticeship.repository.MeetingRepository;
 import com.apprenticeship.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -136,7 +135,9 @@ public class MeetingService {
     }
 
     // According to the meetingId and memberEmails to delete the information from the attendee table
-    @Transactional
+    @Transactional(
+            rollbackFor = {IllegalStateException.class, ResourceNotFoundException.class}
+    )
     public void removeAttendeeFromAttendeeTable(Integer meetingId, List<String> memberEmails) {
         // According to memberEmails to find the corresponding memberID
         List<Member> members = memberEmails.stream()

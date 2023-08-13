@@ -29,11 +29,13 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: apprenticeship.server@gmail.com
-    password: slgyf0226**
+    password: prbgcfuvifstymme
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+      transport:
+        protocol: smtp
 
