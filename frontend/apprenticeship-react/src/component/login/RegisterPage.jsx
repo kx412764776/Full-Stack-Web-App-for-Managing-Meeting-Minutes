@@ -26,10 +26,10 @@ const RegisterForm = ({ onSuccess }) => {
             validateOnMount={true}
             validationSchema={
                 Yup.object({
-                    firstname: Yup.string()
+                    firstName: Yup.string()
                         .matches(/^[a-zA-Z]*$/, 'Only letters are allowed')
                         .required("First name is required"),
-                    lastname: Yup.string()
+                    lastName: Yup.string()
                         .matches(/^[a-zA-Z]*$/, 'Only letters are allowed')
                         .required("Last name is required"),
                     email: Yup.string()
@@ -69,19 +69,19 @@ const RegisterForm = ({ onSuccess }) => {
                 <Form>
                     <Stack mt={15} spacing={10} w={"400px"} >
                         <MyTextInput
-                            label={"first name"}
-                            name={"firstname"}
+                            label={"First name"}
+                            name={"firstName"}
                             type={"text"}
                             placeholder={"Type your first name"}
                         />
                         <MyTextInput
-                            label={"last name"}
-                            name={"lastname"}
+                            label={"Last name"}
+                            name={"lastName"}
                             type={"text"}
                             placeholder={"Type your last name"}
                         />
                         <MyTextInput
-                            label={"email"}
+                            label={"Email"}
                             name={"email"}
                             type={"email"}
                             placeholder={"Type your email"}

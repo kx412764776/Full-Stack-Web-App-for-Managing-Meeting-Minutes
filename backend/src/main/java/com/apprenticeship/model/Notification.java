@@ -68,7 +68,6 @@ public class Notification {
     @Column(
             nullable = false
     )
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date notificationPostDate;
 
     // notificationStatus is if the notification has been sent successfully or not

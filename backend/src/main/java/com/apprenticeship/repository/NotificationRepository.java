@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository("notificationJPARepository")
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
+
 }

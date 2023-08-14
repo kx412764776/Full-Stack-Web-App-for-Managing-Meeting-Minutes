@@ -23,7 +23,6 @@ import java.util.Date;
 public class NotificationService {
 
     private final JavaMailSender javaMailSender;
-
     @Value("${spring.mail.username}")
     private String emailSender;
     private final NotificationRepository notificationRepository;
@@ -50,7 +49,7 @@ public class NotificationService {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper =
                     new MimeMessageHelper(mimeMessage, false, "utf-8");
-            mimeMessageHelper.setFrom("apprenticeship.server@gmail.com");
+            mimeMessageHelper.setFrom(emailSender);
             mimeMessageHelper.setTo(recipientEmail);
             String emailSubject = "New Minutes of " + meetingTable.getMeetingName() + " to Review";
             mimeMessageHelper.setSubject(emailSubject);
@@ -87,9 +86,10 @@ public class NotificationService {
                                   Member memberEmail,
                                   String subject,
                                   String content,
-                                  int notificationStatus) {
+                                  Integer notificationStatus) {
         // Get the current date
         Date currentDate = new Date();
+
 
         Notification notification = new Notification(
                 meetingTable,

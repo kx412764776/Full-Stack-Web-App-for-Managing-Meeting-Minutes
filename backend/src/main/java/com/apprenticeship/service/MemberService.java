@@ -24,7 +24,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberDTOMapper memberDTOMapper;
-
     private final PasswordEncoder passwordEncoder;
 
     public MemberService(
@@ -63,7 +62,9 @@ public class MemberService {
     }
 
     /**
-     * This method is responsible for getting a member from the database.
+     * This method is responsible for getting a member from the database and return a MemberDTO object.
+     * @param email member email
+     * @return MemberDTO object
      */
     public MemberDTO getMemberByEmail(String email) {
         return memberRepository.findMemberByEmail(email)
@@ -74,6 +75,18 @@ public class MemberService {
                         ));
     }
 
+    /**
+     * Get member object by email
+     * @param email member email
+     * @return Member object
+     */
+    public Member getMemberByMemberEmail(String email) {
+        return memberRepository.findMemberByEmail(email)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                "member with email [%s] not found".formatted(email)
+                        ));
+    }
 
     public List<MemberDTO> getAllMemberInfo() {
         return memberRepository.findAll()

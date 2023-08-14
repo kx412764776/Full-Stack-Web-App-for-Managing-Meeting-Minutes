@@ -72,6 +72,18 @@ public class MeetingTable {
         this.meetingDescription = meetingDescription;
     }
 
+    public MeetingTable(String meetingTopic,
+                        String meetingName,
+                        Date meetingDate,
+                        String meetingDuration,
+                        String meetingDescription) {
+        this.meetingTopic = meetingTopic;
+        this.meetingName = meetingName;
+        this.meetingDate = meetingDate;
+        this.meetingDuration = meetingDuration;
+        this.meetingDescription = meetingDescription;
+    }
+
     public Integer getMeetingId() {
         return meetingId;
     }

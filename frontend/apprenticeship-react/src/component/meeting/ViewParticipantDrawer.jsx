@@ -1,9 +1,11 @@
 import {useEffect, useState} from "react";
-import {Button, Checkbox, Divider, message, Space} from "antd";
+import {Button, Checkbox, Col, Divider, List, message, Row, Space} from "antd";
 import {deleteAttendeeInfoByMeetingIdAndEmail, getAttendeeInfoByMeetingId} from "../../services/client.js";
+import {LoginAuth} from "../context/LoginContext.jsx";
 
 const ViewParticipantDrawer = ({selectedMeetingId, onClose}) => {
 
+    const {memberInfo} = LoginAuth();
     const [participantList, setParticipantList] = useState([]);
     const [selectedParticipant, setSelectedParticipant] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
@@ -40,9 +42,6 @@ const ViewParticipantDrawer = ({selectedMeetingId, onClose}) => {
         }
     };
 
-    useEffect(() => {
-        getParticipantList();
-    }, [selectedMeetingId]);
 
     const handleSelectAll = (e) => {
         const checked = e.target.checked;
@@ -56,39 +55,73 @@ const ViewParticipantDrawer = ({selectedMeetingId, onClose}) => {
         }
     };
 
+    const isAcademic = memberInfo.memberRoles == "ACADEMIC";
+
+    useEffect(() => {
+        getParticipantList();
+    }, [selectedMeetingId]);
+
     return (
         <>
-            <Checkbox
-                style={{ marginBottom: 10 }}
-                checked={selectAll}
-                onChange={handleSelectAll}
-            >
-                Select All
-            </Checkbox>
-            <Divider />
-            <Checkbox.Group
-                style={{ display: "block" }}
-                options={participantList.map((attendee) => ({
-                    label: attendee.email + " " + attendee.nameWithRole,
-                    value: attendee.email,
-                }))}
-                value={selectedParticipant}
-                onChange={(email) => setSelectedParticipant(email)}
-            />
-            <Space style={{ position: "absolute", bottom: 20, left: 10 }}>
-                <Button
-                    type="primary"
-                    danger
-                    onClick={handleRemoveParticipant}
-                >
-                    Remove Participant
-                </Button>
-                <Button
-                    onClick={onClose}
-                >
-                    Cancel
-                </Button>
-            </Space>
+            {/* If the user is academic, show the checkbox to select all participants
+                If the member is not academic, show the list of participants*/}
+            {isAcademic === true ? (
+                <>
+                    <Checkbox
+                        style={{marginBottom: 10}}
+                        checked={selectAll}
+                        onChange={handleSelectAll}
+                    >
+                        Select All
+                    </Checkbox>
+                    <Divider/>
+                    <Checkbox.Group
+                        style={{display: "block", whiteSpace: "normal" }}
+                        options={participantList.map((attendee) => ({
+                            label: (
+                                <div style={{marginBottom: "8px"}}>
+                                    <div>{attendee.email}</div>
+                                    <div>{attendee.nameWithRole}</div>
+                                </div>
+                            ),
+                            value: attendee.email,
+                        }))}
+                        value={selectedParticipant}
+                        onChange={(email) => setSelectedParticipant(email)}
+                    />
+                </>
+            ) : (
+                <List
+                    itemLayout="horizontal"
+                    dataSource={participantList}
+                    renderItem={(item) => (
+                        <List.Item>
+                            <Row gutter={8}>
+                                <Col span={12}>{item.email}</Col>
+                                <Col span={12} style={{whiteSpace: 'nowrap'}}>{item.nameWithRole}</Col>
+                            </Row>
+                        </List.Item>
+                    )}
+                />
+            )}
+
+            {/* If the user is academic, show the remove participant button */}
+            { isAcademic &&
+                <Space style={{position: "absolute", bottom: 20, left: 10}}>
+                    <Button
+                        type="primary"
+                        danger
+                        onClick={handleRemoveParticipant}
+                    >
+                        Remove Participant
+                    </Button>
+                    <Button
+                        onClick={onClose}
+                    >
+                        Cancel
+                    </Button>
+                </Space>
+            }
         </>
     )
 }
