@@ -18,7 +18,8 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     Optional<Member> findMemberByEmail(String email);
 
     // According to the email prefix to find members
-
     List<Member> findTop10ByEmailStartingWith(String emailPrefix);
+
+    Optional<Member> findMemberByMemberId(Integer memberId);
 
 }
