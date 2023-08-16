@@ -1,9 +1,11 @@
 package com.apprenticeship.controller;
 
 import com.apprenticeship.dto.MeetingInfoDTO;
+import com.apprenticeship.exception.RequestException;
 import com.apprenticeship.exception.ResourceNotFoundException;
 import com.apprenticeship.model.MeetingTable;
 import com.apprenticeship.requestsAndResponses.AddAttendeeRequest;
+import com.apprenticeship.requestsAndResponses.MeetingUpdateRequest;
 import com.apprenticeship.service.MeetingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +47,21 @@ public class MeetingController {
         return ResponseEntity.ok(meetingInfoDTO);
     }
 
+    // Edit meeting information by meeting id
+    @PutMapping("/meetingInfo/{meetingId}")
+    public void editMeetingInfoByMeetingId(
+            @PathVariable("meetingId") Integer meetingId,
+            @RequestBody MeetingUpdateRequest meetingUpdateRequest) {
+        meetingService.editMeetingInfoByMeetingId(meetingId, meetingUpdateRequest);
+    }
+
+    // Delete meeting information by meeting id
+    @DeleteMapping("/meetingInfo/{meetingId}")
+    public void deleteMeetingInfoByMeetingId(
+            @PathVariable("meetingId") Integer meetingId) {
+        meetingService.deleteMeetingInfoByMeetingId(meetingId);
+    }
+
     // Get meetings information by member email
     @PostMapping({"/{memberEmail}"})
     public ResponseEntity<?> getMeetingInfoByMemberEmail(
@@ -72,7 +89,7 @@ public class MeetingController {
                     addAttendeeRequest.emails().stream().toList(),
                     addAttendeeRequest.meetingId());
             return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (IllegalStateException e) {
+        } catch (RequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Invalid request: " + e.getMessage());
         }

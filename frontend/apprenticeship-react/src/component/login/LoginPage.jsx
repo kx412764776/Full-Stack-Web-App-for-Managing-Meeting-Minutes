@@ -37,7 +37,7 @@ const LoginForm = () => {
             onSubmit={(values, {setSubmitting}) => {
                 setSubmitting(true);
                 login(values).then(() => {
-                    window.location.href = "/apprenticeship/dashboard"
+                    window.location.href = "/apprenticeship/meeting"
                 }).catch(err => {
                     console.log(err)
                 }).finally(() => {
@@ -90,7 +90,7 @@ const LoginForm = () => {
 export default function LoginPage() {
     const { member } = LoginAuth();
     if (member) {
-        window.location.href = "/apprenticeship/dashboard"
+        window.location.href = "/apprenticeship/meeting"
     }
 
     return (

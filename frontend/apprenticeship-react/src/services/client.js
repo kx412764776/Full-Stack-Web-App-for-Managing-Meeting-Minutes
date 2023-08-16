@@ -107,6 +107,29 @@ export const saveMeeting = async (meeting) => {
     }
 }
 
+export const updateMeetingByMeetingId = async (meetingId, updatedMeetingInfo) => {
+    try {
+        return await axios.put(
+            `http://localhost:8090/apprenticeship/meeting/meetingInfo/${meetingId}`,
+            updatedMeetingInfo,
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const deleteMeetingByMeetingId = async (meetingId) => {
+    try {
+        return await axios.delete(
+            `http://localhost:8090/apprenticeship/meeting/meetingInfo/${meetingId}`,
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export const addParticipantAndMeetingToAttendeeTable = async (emails, meetingId) => {
     const insertAttendee = {
         emails: emails,
@@ -164,6 +187,100 @@ export const getMinutesByMeetingId = async (meetingId) => {
         return await axios.post(
             `http://localhost:8090/apprenticeship/minutes/meetingId/${meetingId}`,
             meetingId,
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const sendEmail = async (meetingId, memberEmails) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/notification/sendEmail`,
+            {meetingId, memberEmails},
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const updateSignature = async (meetingId, memberEmail) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/minutes/signature`,
+            {meetingId, memberEmail},
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const checkIfSignatureExists = async (meetingId, memberEmail) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/minutes/signature/status`,
+            {meetingId, memberEmail},
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getFullSignedMeetingList = async () => {
+    try {
+        return await axios.get(
+            `http://localhost:8090/apprenticeship/minutes/signature/signed`,
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getNotFullSignedMeetingList = async () => {
+    try {
+        return await axios.get(
+            `http://localhost:8090/apprenticeship/minutes/signature/notFullSigned`,
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getSignatureTableByMeetingId = async (meetingId) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/minutes/signature/${meetingId}`,
+            meetingId,
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getSignedMeetingListByMemberEmail = async (memberEmail) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/minutes/signature/signed/${memberEmail}`,
+            memberEmail,
+            getAuthConfig()
+        )
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getNotSignedMeetingListByMemberEmail = async (memberEmail) => {
+    try {
+        return await axios.post(
+            `http://localhost:8090/apprenticeship/minutes/signature/notSigned/${memberEmail}`,
+            memberEmail,
             getAuthConfig()
         )
     } catch (error) {

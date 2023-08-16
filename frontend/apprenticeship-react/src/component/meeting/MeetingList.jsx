@@ -1,11 +1,12 @@
 import {useEffect, useState} from 'react';
-import {getMeetingInfo, getMeetingInfoByEmail} from "../../services/client.js";
+import {deleteMeetingByMeetingId, getMeetingInfo, getMeetingInfoByEmail} from "../../services/client.js";
 import {LoginAuth} from "../context/LoginContext.jsx";
 import Highlighter from 'react-highlight-words';
-import {Button, Drawer, Input, Space, Table} from 'antd';
+import {Button, Divider, Drawer, Input, message, Modal, Space, Table} from 'antd';
 import {SearchOutlined} from '@ant-design/icons';
 import AddParticipantForm from "./AddParticipantForm.jsx";
 import ViewParticipantDrawer from "./ViewParticipantDrawer.jsx";
+import EditMeetingInfoForm from "./EditMeetingInfoForm.jsx";
 
 const MeetingList = () => {
 
@@ -18,28 +19,71 @@ const MeetingList = () => {
     const [selectedMeetingId, setSelectedMeetingId] = useState(null);
     const [selectedDrawer, setSelectedDrawer] = useState('addParticipants');
 
+    // delete meeting variable and confirm modal
+    const [deleteMeetingId, setDeleteMeetingId] = useState(null);
+    const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+
+    // set edit meeting id and edit meeting modal
+    const [editMeetingId, setEditMeetingId] = useState(null);
+    const [showEditMeetingModal, setShowEditMeetingModal] = useState(false);
+
+    // Open edit meeting modal
+    const handleShowEditMeetingModal = (meetingId) => {
+        setEditMeetingId(meetingId);
+        setShowEditMeetingModal(true);
+    }
+
+    // Close edit meeting modal
+    const handleCloseEditMeetingModal = () => {
+        setShowEditMeetingModal(false);
+    }
+
+    // when choose delete meeting, show confirm modal
+    const showConfirmDeleteDialog = (meetingId) => {
+        setDeleteMeetingId(meetingId);
+        setShowConfirmDeleteModal(true);
+    }
+
+    const handleDeleteMeeting = async () => {
+        try {
+            console.log(deleteMeetingId);
+            await deleteMeetingByMeetingId(deleteMeetingId);
+            setShowConfirmDeleteModal(false);
+            message.success('Meeting deleted successfully');
+            await fetchMeetingInfo();
+        } catch (err) {
+            message.error('Failed to delete meeting');
+        }
+    }
+
+    const handleCancelDeleteMeeting = () => {
+        setShowConfirmDeleteModal(false);
+    }
+
     const onClose = () => {
         setDrawerVisible(false);
     }
 
-    // Handle adding participant
+    const fetchMeetingInfo = async () => {
+        try {
+            let res;
+            if (memberInfo.memberRoles == 'ACADEMIC') {
+                res = await getMeetingInfo();
+            } else {
+                const memberEmail = memberInfo.email;
+                res = await getMeetingInfoByEmail(memberEmail);
+            }
+            setMeetingInfoList(res.data);
+
+        } catch (err) {
+            console.log(err.message);
+        }
+    };
+
+
 
     useEffect(() => {
-        const fetchMeetingInfo = async () => {
-            try {
-                let res;
-                console.log(memberInfo.memberRoles);
-                if (memberInfo.memberRoles == 'ACADEMIC') {
-                    res = await getMeetingInfo();
-                } else {
-                    const memberEmail = memberInfo.email;
-                    res = await getMeetingInfoByEmail(memberEmail);
-                }
-                setMeetingInfoList(res.data);
-            } catch (err) {
-                console.log(err);
-            }
-        };
+
         fetchMeetingInfo();
     }, [memberInfo]);
 
@@ -127,6 +171,21 @@ const MeetingList = () => {
         ...getColumnSearchProps(key), // Apply search functionality to each column
     })) : [];
 
+
+    // change the format of meetingDate
+    const modifiedData = meetingInfoList.map(item => {
+        const {meetingDate, ...rest} = item;
+        let date = new Date(meetingDate);
+        // format the date to dd/mm/yyyy hh:mm:ss
+        const modifiedMeetingDate =
+            date.toLocaleString().split(',')[0] + ' ' + date.toLocaleString().split(',')[1];
+        return {...rest, meetingDate: modifiedMeetingDate};
+    });
+
+    const modifiedDataWithKey =
+        modifiedData.map((row, index) =>
+            ({...row, key: row[0] || index}));
+
     // If Login member is ACADEMIC,
     // add columns for adding meeting minutes, add participants and edit meeting info
     if (memberInfo.memberRoles == 'ACADEMIC') {
@@ -137,6 +196,7 @@ const MeetingList = () => {
                 render: (_, record) => (
                     <Space direction={"vertical"}>
                         <Button
+                            style={{width: '100%'}}
                             type="primary"
                             onClick={() => {
                                 window.location.href = (`/apprenticeship/meeting/${record.meetingId}/minutes`);
@@ -145,6 +205,7 @@ const MeetingList = () => {
                             Edit Meeting Minutes
                         </Button>
                         <Button
+                            style={{width: '100%'}}
                             type="primary"
                             onClick={() => {
                                 window.location.href = (`/apprenticeship/meeting/${record.meetingId}/minutesInfo`);
@@ -162,6 +223,7 @@ const MeetingList = () => {
                     return (
                         <Space direction={"vertical"}>
                             <Button
+                                style={{width: '100%'}}
                                 type="primary"
                                 onClick={() => {
                                     setDrawerVisible(true)
@@ -172,6 +234,7 @@ const MeetingList = () => {
                                 Add Participants
                             </Button>
                             <Button
+                                style={{width: '100%'}}
                                 type="primary"
                                 onClick={() => {
                                     setDrawerVisible(true)
@@ -184,6 +247,29 @@ const MeetingList = () => {
                         </Space>
                     );
                 }
+            },
+            {
+                title: 'Edit Meeting',
+                dataIndex: 'editMeeting',
+                render: (_, record) => (
+                    <Space direction={"vertical"}>
+                        <Button
+                            style={{width: '100%'}}
+                            type="primary"
+                            onClick={() => handleShowEditMeetingModal(record.meetingId)}
+                        >
+                            Edit Meeting
+                        </Button>
+                        <Button
+                            style={{width: '100%'}}
+                            type="primary"
+                            danger
+                            onClick={() => showConfirmDeleteDialog(record.meetingId)}
+                        >
+                            Delete Meeting
+                        </Button>
+                    </Space>
+                )
             }
         )
     } else if (memberInfo.memberRoles == 'APPRENTICE' || memberInfo.memberRoles == 'MENTOR') {
@@ -193,6 +279,7 @@ const MeetingList = () => {
                 dataIndex: 'meetingMinutes',
                 render: (_, record) => (
                     <Button
+                        style={{width: '100%'}}
                         type="primary"
                         onClick={() => {
                             window.location.href = (`/apprenticeship/meeting/${record.meetingId}/minutesInfo`);
@@ -208,6 +295,7 @@ const MeetingList = () => {
                 render: (_, record) => {
                     return (
                         <Button
+                            style={{width: '100%'}}
                             type="primary"
                             onClick={() => {
                                 setDrawerVisible(true)
@@ -223,23 +311,14 @@ const MeetingList = () => {
         )
     }
 
-    // change the format of meetingDate
-    const modifiedData = meetingInfoList.map(item => {
-        const {meetingDate, ...rest} = item;
-        let date = new Date(meetingDate);
-        // format the date to dd/mm/yyyy hh:mm:ss
-        const modifiedMeetingDate =
-            date.toLocaleString().split(',')[0] + ' ' + date.toLocaleString().split(',')[1];
-        return {...rest, meetingDate: modifiedMeetingDate};
-    });
-
-    const modifiedDataWithKey =
-        modifiedData.map((row, index) =>
-            ({...row, key: row[0] || index}));
-
     return (
     <>
-        <Table columns={columns} dataSource={modifiedDataWithKey}/>
+        <Divider>Meeting List</Divider>
+        <Table
+            columns={columns}
+            dataSource={modifiedDataWithKey}
+            bordered={true}
+        />
         <Drawer
             title={selectedDrawer === 'addParticipants' ? 'Add Participants' : 'View Participants'}
             width={400}
@@ -259,6 +338,41 @@ const MeetingList = () => {
                 />
             )}
         </Drawer>
+        {deleteMeetingId && (
+            <Modal
+                title="Delete Meeting"
+                open={showConfirmDeleteModal}
+                onCancel={handleCancelDeleteMeeting}
+                footer={[
+                    <Button key="cancel" onClick={handleCancelDeleteMeeting}>
+                        Cancel
+                    </Button>,
+                    <Button key="delete" type="primary" danger onClick={handleDeleteMeeting}>
+                        Delete
+                    </Button>
+                ]}
+            >
+                Are you sure you want to delete this meeting?
+            </Modal>
+        )}
+        {editMeetingId && (
+            <Modal
+                title="Edit Meeting"
+                centered
+                open={showEditMeetingModal}
+                onCancel={() => {
+                    handleCloseEditMeetingModal();
+                    setEditMeetingId(null);
+                }}
+                footer={null}
+            >
+                <EditMeetingInfoForm
+                    meetingId={editMeetingId}
+                    onClose={handleCloseEditMeetingModal}
+                />
+            </Modal>
+        )}
+
     </>
     )
 }

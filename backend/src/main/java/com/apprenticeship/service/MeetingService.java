@@ -2,17 +2,16 @@ package com.apprenticeship.service;
 
 import com.apprenticeship.dto.MeetingInfoDTO;
 import com.apprenticeship.dto.MeetingInfoDTOMapper;
+import com.apprenticeship.exception.RequestException;
 import com.apprenticeship.exception.ResourceNotFoundException;
-import com.apprenticeship.model.AttendeeTable;
-import com.apprenticeship.model.MeetingTable;
-import com.apprenticeship.model.Member;
-import com.apprenticeship.repository.AttendeeRepository;
-import com.apprenticeship.repository.MeetingRepository;
-import com.apprenticeship.repository.MemberRepository;
+import com.apprenticeship.model.*;
+import com.apprenticeship.repository.*;
+import com.apprenticeship.requestsAndResponses.MeetingUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This class is for implementing the business logic of the MeetingController
@@ -23,16 +22,21 @@ public class MeetingService {
     private final MeetingRepository meetingRepository;
     private final MemberRepository memberRepository;
     private final AttendeeRepository attendeeRepository;
-
+    private final MinutesRepository minutesRepository;
+    private final SignatureRepository signatureRepository;
     private final MeetingInfoDTOMapper meetingInfoDTOMapper;
 
     public MeetingService(MeetingRepository meetingRepository,
                           MemberRepository memberRepository,
                           AttendeeRepository attendeeRepository,
+                          MinutesRepository minutesRepository,
+                          SignatureRepository signatureRepository,
                           MeetingInfoDTOMapper meetingInfoDTOMapper) {
         this.meetingRepository = meetingRepository;
         this.memberRepository = memberRepository;
         this.attendeeRepository = attendeeRepository;
+        this.minutesRepository = minutesRepository;
+        this.signatureRepository = signatureRepository;
         this.meetingInfoDTOMapper = meetingInfoDTOMapper;
     }
 
@@ -92,7 +96,7 @@ public class MeetingService {
         //Step 3: If the attendee table already has the same meetingId and memberId, then throw exception
         members.forEach(member -> {
             if (attendeeRepository.existsByMemberIdAndMeetingId(member, meetingTableInfo)) {
-                throw new IllegalStateException(
+                throw new RequestException(
                         ("member with email [%s] already exists in meeting with meetingId [%s]"
                                 .formatted(member.getEmail(), meetingId))
                 );
@@ -181,5 +185,82 @@ public class MeetingService {
                         ("meeting with meetingId [%s] not found".formatted(meetingId))
                 ));
         return meetingTableInfo;
+    }
+
+    /**
+     * This method is used to edit the meeting information by meetingId
+     * @param meetingId
+     * @param updatedMeetingTableInfo the updated meeting information from frontend
+     * @return the meeting information after edit
+     */
+    public MeetingTable editMeetingInfoByMeetingId(Integer meetingId, MeetingUpdateRequest updatedMeetingTableInfo) {
+        // According to the meetingId to find the corresponding meeting information
+        MeetingTable meetingInfo = meetingRepository.findMeetingTableByMeetingId(meetingId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ("meeting with meetingId [%s] not found".formatted(meetingId))
+                ));
+
+        // Update the meeting information
+        boolean changes = false;
+
+        // determine if the meeting topic is null or if it is not changed
+        if (updatedMeetingTableInfo.meetingTopic() != null && !updatedMeetingTableInfo.meetingTopic().equals(meetingInfo.getMeetingTopic())) {
+            meetingInfo.setMeetingTopic(updatedMeetingTableInfo.meetingTopic());
+            changes = true;
+        }
+
+        // determine if the meeting name is null or if it is not changed
+        if (updatedMeetingTableInfo.meetingName() != null && !updatedMeetingTableInfo.meetingName().equals(meetingInfo.getMeetingName())) {
+            meetingInfo.setMeetingName(updatedMeetingTableInfo.meetingName());
+            changes = true;
+        }
+
+        // determine if the meeting date is null or if it is not changed
+        if (updatedMeetingTableInfo.meetingDate() != null && !updatedMeetingTableInfo.meetingDate().equals(meetingInfo.getMeetingDate())) {
+            meetingInfo.setMeetingDate(updatedMeetingTableInfo.meetingDate());
+            changes = true;
+        }
+
+        // determine if the meeting duration is null or if it is not changed
+        if (updatedMeetingTableInfo.meetingDuration() != null && !updatedMeetingTableInfo.meetingDuration().equals(meetingInfo.getMeetingDuration())) {
+            meetingInfo.setMeetingDuration(updatedMeetingTableInfo.meetingDuration());
+            changes = true;
+        }
+
+        // If there is no change, throw exception
+        if (!changes) {
+            throw new RequestException("Meeting information is not changed with meetingId [%s]".formatted(meetingId));
+        }
+
+        meetingRepository.save(meetingInfo);
+        return meetingInfo;
+
+    }
+
+    public void deleteMeetingInfoByMeetingId(Integer meetingId) {
+        // According to the meetingId to find the corresponding meeting information
+        MeetingTable meetingInfo = meetingRepository.findMeetingTableByMeetingId(meetingId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ("meeting with meetingId [%s] not found".formatted(meetingId))
+                ));
+
+        // According to the meetingId to find the corresponding attendee information and delete
+        List<AttendeeTable> attendeeInfoList = attendeeRepository.findAttendeeTableByMeetingId(meetingInfo);
+        if (attendeeInfoList != null) {
+            attendeeRepository.deleteAll(attendeeInfoList);
+        }
+
+        // According to the meetingId to find the corresponding minutes information and delete
+        Optional<MinutesTable> minutesInfo = minutesRepository.findMinutesTableByMeetingId(meetingInfo);
+        minutesInfo.ifPresent(minutesRepository::delete);
+
+        // According to the meetingId to find the corresponding signature information and delete
+        Optional<List<SignatureInfo>> signatureInfoList =
+                signatureRepository.findAllByMinutesId_MeetingId(meetingInfo);
+        signatureInfoList.ifPresent(signatureRepository::deleteAll);
+
+        meetingRepository.delete(meetingInfo);
+
+
     }
 }

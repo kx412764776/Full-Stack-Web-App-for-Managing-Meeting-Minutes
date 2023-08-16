@@ -1,6 +1,5 @@
 import {createBrowserRouter} from "react-router-dom";
 import WelcomePage from "./WelcomePage.jsx";
-import Dashboard from "../../Dashboard.jsx";
 import LoginPage from "../login/LoginPage.jsx";
 import RegisterPage from "../login/RegisterPage.jsx";
 import ErrorPage from "./ErrorPage.jsx";
@@ -9,6 +8,9 @@ import ProtectedRoute from "./ProtectedRoute.jsx";
 import MeetingPage from "../../MeetingPage.jsx";
 import AddMinutesPage from "../minutes/AddMinutesPage.jsx";
 import ViewMinutes from "../minutes/ViewMinutes.jsx";
+import SignedMeetingList from "../minutes/SignedMeetingList.jsx";
+import SignedAttendeeListPage from "../minutes/SignedAttendeeListPage.jsx";
+import UnFullSignedMeetingList from "../minutes/UnFullSignedMeetingList.jsx";
 
 export const BrowserRouter = createBrowserRouter(
     [
@@ -33,16 +35,6 @@ export const BrowserRouter = createBrowserRouter(
             errorElement: <ErrorPage/>
         },
         {
-            path: '/apprenticeship/dashboard',
-            element:
-                <LoginAuthProvider>
-                    <ProtectedRoute>
-                        <Dashboard/>
-                    </ProtectedRoute>
-                </LoginAuthProvider>,
-            errorElement: <ErrorPage/>
-        },
-        {
             path: '/apprenticeship/meeting',
             element:
                 <LoginAuthProvider>
@@ -54,11 +46,12 @@ export const BrowserRouter = createBrowserRouter(
         },
         {
             path: '/apprenticeship/meeting/:meetingId/minutes',
-            element: <LoginAuthProvider>
-                <ProtectedRoute>
-                    <AddMinutesPage/>
-                </ProtectedRoute>
-            </LoginAuthProvider>,
+            element:
+                <LoginAuthProvider>
+                    <ProtectedRoute>
+                        <AddMinutesPage/>
+                    </ProtectedRoute>
+                </LoginAuthProvider>,
             errorElement: <ErrorPage/>
         },
         {
@@ -67,6 +60,36 @@ export const BrowserRouter = createBrowserRouter(
                 <LoginAuthProvider>
                     <ProtectedRoute>
                         <ViewMinutes/>
+                    </ProtectedRoute>
+                </LoginAuthProvider>,
+            errorElement: <ErrorPage/>
+        },
+        {
+            path: '/apprenticeship/minutes/signed',
+            element:
+                <LoginAuthProvider>
+                    <ProtectedRoute>
+                        <SignedMeetingList/>
+                    </ProtectedRoute>
+                </LoginAuthProvider>,
+            errorElement: <ErrorPage/>
+        },
+        {
+            path: '/apprenticeship/minutes/unFullSigned',
+            element:
+                <LoginAuthProvider>
+                    <ProtectedRoute>
+                        <UnFullSignedMeetingList/>
+                    </ProtectedRoute>
+                </LoginAuthProvider>,
+            errorElement: <ErrorPage/>
+        },
+        {
+            path: '/apprenticeship/minutes/signature/:meetingId',
+            element:
+                <LoginAuthProvider>
+                    <ProtectedRoute>
+                        <SignedAttendeeListPage/>
                     </ProtectedRoute>
                 </LoginAuthProvider>,
             errorElement: <ErrorPage/>

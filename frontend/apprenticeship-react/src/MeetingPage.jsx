@@ -19,11 +19,11 @@ const MeetingPage = () => {
         <>
             <HomeNav/>
             <Space direction="vertical"
-                   style={{width: '100%', marginTop: '10px'}}
+                   style={{width: '100%'}}
             >
                 {memberInfo.memberRoles == "ACADEMIC" && (
                     <Button
-                        style={{marginLeft: '10px'}}
+                        style={{marginLeft: '10px', marginTop: '30px'}}
                         type="primary"
                         icon={<PlusOutlined />}
                         onClick={toggleForm}

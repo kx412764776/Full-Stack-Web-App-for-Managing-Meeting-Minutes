@@ -9,8 +9,7 @@ import {
     getMinutesByMeetingId
 } from "../../services/client.js";
 import MeetingInfoDescriptions from "../meeting/MeetingInfoDescriptions.jsx";
-import {Button, Divider, message, Space} from "antd";
-import {Flex} from "@chakra-ui/react";
+import {Button, Col, Divider, message, Row, Space} from "antd";
 
 const AddMinutesPage = () => {
 
@@ -43,19 +42,29 @@ const AddMinutesPage = () => {
     return (
         <>
             <HomeNav/>
-            <Flex >
-                <MeetingInfoDescriptions meetingInfo={meetingInfo}/>
-                <Button
-                    type={"primary"}
-                    onClick={() => window.location.href = `/apprenticeship/meeting`}
-                    style={{
-                        marginTop: '10px',
-                        marginRight: '10px'
+            <Row
+                gutter={16}
+                style={{
+                    padding: '0 50px',
+                    marginTop: '10px',
+                }}
+            >
+                <Col span={16}>
+                    <MeetingInfoDescriptions meetingInfo={meetingInfo}/>
+                </Col>
+                <Col span={8} align="end">
+                    <Button
+                        type={"primary"}
+                        onClick={() => window.location.href = `/apprenticeship/meeting`}
+                        style={{
+                            marginTop: '10px',
+                            marginRight: '10px'
                         }}
-                >
-                    Back to Meeting
-                </Button>
-            </Flex>
+                    >
+                        Back to Meeting
+                    </Button>
+                </Col>
+            </Row>
             <Divider/>
             <Space
                 direction="vertical"

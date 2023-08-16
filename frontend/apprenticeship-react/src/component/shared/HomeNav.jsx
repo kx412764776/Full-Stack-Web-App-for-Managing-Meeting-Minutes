@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react';
 import {HamburgerIcon} from '@chakra-ui/icons';
 import {LoginAuth} from "../context/LoginContext.jsx";
-import { useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 
 
@@ -38,9 +38,9 @@ export function HomeNav() {
 
 
     return (
-        <Box>
+        <Box >
             <Flex
-                bg={useColorModeValue('white', 'gray.800')}
+                bg={useColorModeValue('gray.100', 'gray.800')}
                 color={useColorModeValue('gray.600', 'white')}
                 minH="60px"
                 py={{base: 2}}
@@ -136,8 +136,8 @@ function SubNav({label, href, subLabel}) {
 
 function Nav() {
     const linkColor = useColorModeValue('gray.600', 'gray.200');
-    const linkHoverColor = useColorModeValue('gray.800', 'white');
-    const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+    const linkHoverColor = useColorModeValue('blue.800', 'blue.200');
+    const popoverContentBgColor = useColorModeValue('gray.100', 'gray.800');
 
     return (
         <Stack direction="row" spacing={4}>
@@ -179,16 +179,23 @@ function Nav() {
 
 const NAV_ITEMS = [
     {
-        label: 'Home',
-        href: '/apprenticeship/dashboard',
-    },
-    {
         label: 'Meeting',
         href: '/apprenticeship/meeting',
     },
     {
-        label: 'To Sign',
-        href: '/apprenticeship/signatures',
+        label: 'Minutes Signature',
+        children: [
+            {
+                label: 'Signed Minutes',
+                subLabel: 'View all signed minutes',
+                href: '/apprenticeship/minutes/signed',
+            },
+            {
+                label: 'Unsigned Minutes',
+                subLabel: 'View all unsigned minutes',
+                href: '/apprenticeship/minutes/unFullSigned',
+            }
+        ],
     },
     {
         label: 'About',

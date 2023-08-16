@@ -61,7 +61,8 @@ public class Notification {
     private String notificationSubject;
 
     @Column(
-            nullable = false
+            nullable = false,
+            columnDefinition = "TEXT"
     )
     private String notificationContent;
 

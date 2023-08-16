@@ -3,6 +3,7 @@ package com.apprenticeship.service;
 import com.apprenticeship.dto.MeetingInfoDTO;
 import com.apprenticeship.dto.MeetingInfoDTOMapper;
 import com.apprenticeship.dto.SignatureStatusDTO;
+import com.apprenticeship.enums.MemberRole;
 import com.apprenticeship.exception.ResourceNotFoundException;
 import com.apprenticeship.model.*;
 import com.apprenticeship.repository.*;
@@ -80,6 +81,7 @@ public class SignatureService {
 
     /**
      * Get minutes table object from meeting id
+     *
      * @param meetingId
      * @return minutes table object
      */
@@ -96,6 +98,7 @@ public class SignatureService {
 
     /**
      * Get member object from member email
+     *
      * @param memberEmail
      * @return member object
      */
@@ -126,8 +129,13 @@ public class SignatureService {
         return signedMeetingListDTO;
     }
 
-    // check if all attendee in a meeting already signed
-    private boolean isMinutesFullSigned(MeetingTable meetingId){
+    /**
+     * check if all attendee in a meeting already signed minutes
+     *
+     * @param meetingId
+     * @return true if all attendee in a meeting already signed minutes
+     */
+    private boolean isMinutesFullSigned(MeetingTable meetingId) {
         // Get attendee list of the meeting
         List<AttendeeTable> attendeeList = attendeeRepository.findAllByMeetingId(meetingId);
 
@@ -148,6 +156,54 @@ public class SignatureService {
         return false;
     }
 
+    /**
+     * Get meeting list that there has at least one attendee in a meeting not signed
+     */
+    public List<MeetingInfoDTO> getNotAllAttendeeSigned() {
+        // Get all meeting information
+        List<MeetingTable> allMeeting = meetingRepository.findAll();
+
+        // Get meeting list that there has at least one attendee in a meeting not signed
+        List<MeetingTable> notSignedMeetingList = allMeeting.stream()
+                .filter(this::isMinutesNotFullSigned)
+                .toList();
+
+        // Convert meeting table object to meeting info dto mapper object
+        List<MeetingInfoDTO> notSignedMeetingListDTO = notSignedMeetingList.stream()
+                .map(meetingInfoDTOMapper)
+                .toList();
+
+        return notSignedMeetingListDTO;
+    }
+
+    /**
+     * check whether there has at least one attendee in a meeting not signed
+     *
+     * @param meetingTable
+     * @return
+     */
+    private boolean isMinutesNotFullSigned(MeetingTable meetingTable) {
+        // Get attendee list of the meeting
+        List<AttendeeTable> attendeeList = attendeeRepository.findAllByMeetingId(meetingTable);
+
+        // Get signature list of the meeting
+        List<SignatureInfo> signatureList = signatureRepository.findAllByMinutesId_MeetingId(meetingTable)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Signature with meeting id " + meetingTable.getMeetingId() + " does not exist."
+                ));
+
+        // Check if there has at least one attendee in a meeting not signed
+        for (AttendeeTable attendee : attendeeList) {
+            for (SignatureInfo signature : signatureList) {
+                if (attendee.getMemberId().getMemberId().equals(signature.getMemberId().getMemberId())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     // Get a table of whether meeting attendees have signed from meeting id
     public List<SignatureStatusDTO> getSignatureTableByMeetingId(Integer meetingId) {
         MeetingTable meetingTable = meetingRepository.findMeetingTableByMeetingId(meetingId)
@@ -164,8 +220,9 @@ public class SignatureService {
             Member member = attendee.getMemberId();
             String name = member.getFirstName() + " " + member.getLastName();
             String email = member.getEmail();
+            String role = member.getMemberRole();
             Integer signatureStatus = isAttendeeSigned(meetingId, member.getMemberId()) ? 1 : 0;
-            signatureStatusList.add(new SignatureStatusDTO(name, email, signatureStatus));
+            signatureStatusList.add(new SignatureStatusDTO(name, email, role, signatureStatus));
         }
 
         return signatureStatusList;
@@ -173,6 +230,7 @@ public class SignatureService {
 
     /**
      * Check if attendee has signed
+     *
      * @param meetingId
      * @param memberId
      * @return
@@ -184,12 +242,62 @@ public class SignatureService {
                 ));
 
 
-        // Get isSigned from signatureInfo table
-        Integer isSigned = signatureRepository.findByMinutesId_MeetingIdAndMemberId_MemberId(selectedMeeting, memberId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                "Signature with meeting id " + meetingId + " and member id " + memberId + " does not exist."
-        )).getIsSigned();
+        // Get signature record of selected meeting and memberId
+        SignatureInfo signatureInfo =
+                signatureRepository.findByMinutesId_MeetingIdAndMemberId_MemberId(selectedMeeting, memberId);
 
-        return isSigned != null;
+        // If signature record is null, return false
+        return signatureInfo != null;
+    }
+
+    /**
+     * According to memberEmail, getting meeting list that member attended and signatureInfo exists
+     * @param memberEmail
+     * @return MeetingInfoDTO list
+     */
+    public List<MeetingInfoDTO> getSignedMeetingListByMemberEmail(String memberEmail) {
+        // Get member object from member email
+        Member member = getMemberFromMemberEmail(memberEmail);
+
+        // Get meeting list that member attended
+        List<MeetingTable> meetingList = attendeeRepository.findAllByMemberId(member)
+                .stream()
+                .map(AttendeeTable::getMeetingId)
+                .toList();
+
+        // If signatureInfo exists, add meeting to list
+        List<MeetingInfoDTO> signedMeetingList = new ArrayList<>();
+        for (MeetingTable meeting : meetingList) {
+            if (signatureRepository.existsByMemberIdAndMinutesId_MeetingId(member, meeting)) {
+                signedMeetingList.add(meetingInfoDTOMapper.apply(meeting));
+            }
+        }
+
+        return signedMeetingList;
+    }
+
+    /**
+     * Get not signed meeting list by member email
+     * @param memberEmail
+     * @return
+     */
+    public List<MeetingInfoDTO> getNotSignedMeetingListByMemberEmail(String memberEmail) {
+        // Get member object from member email
+        Member member = getMemberFromMemberEmail(memberEmail);
+
+        // Get meeting list that member attended
+        List<MeetingTable> meetingList = attendeeRepository.findAllByMemberId(member)
+                .stream()
+                .map(AttendeeTable::getMeetingId)
+                .toList();
+
+        // If signatureInfo not exists, add meeting to list
+        List<MeetingInfoDTO> notSignedMeetingList = new ArrayList<>();
+        for (MeetingTable meeting : meetingList) {
+            if (!signatureRepository.existsByMemberIdAndMinutesId_MeetingId(member, meeting)) {
+                notSignedMeetingList.add(meetingInfoDTOMapper.apply(meeting));
+            }
+        }
+        return notSignedMeetingList;
     }
 }

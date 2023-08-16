@@ -8,18 +8,17 @@ const ViewParticipantDrawer = ({selectedMeetingId, onClose}) => {
     const {memberInfo} = LoginAuth();
     const [participantList, setParticipantList] = useState([]);
     const [selectedParticipant, setSelectedParticipant] = useState([]);
-    const [selectAll, setSelectAll] = useState(false);
+    const indeterminate = selectedParticipant.length > 0 && selectedParticipant.length < participantList.length;
+    const selectAll = selectedParticipant.length === participantList.length;
 
     const handleRemoveParticipant = async () => {
         // Remove selected participant from the meeting
         try {
             await deleteAttendeeInfoByMeetingIdAndEmail(selectedMeetingId, selectedParticipant);
             setSelectedParticipant([]);
-            setSelectAll(false);
             message.success("Participant with email " + selectedParticipant + " removed successfully");
             await getParticipantList();
         } catch (error) {
-            console.log(error);
             message.error("Error removing participant with email " + selectedParticipant);
         } finally {
             onClose();
@@ -45,11 +44,10 @@ const ViewParticipantDrawer = ({selectedMeetingId, onClose}) => {
 
     const handleSelectAll = (e) => {
         const checked = e.target.checked;
-        setSelectAll(checked);
         if (checked) {
             const allEmails = participantList.map((attendee) => attendee.email);
-            console.log(allEmails);
             setSelectedParticipant(allEmails);
+            console.log(allEmails);
         } else {
             setSelectedParticipant([]);
         }
@@ -71,6 +69,7 @@ const ViewParticipantDrawer = ({selectedMeetingId, onClose}) => {
                         style={{marginBottom: 10}}
                         checked={selectAll}
                         onChange={handleSelectAll}
+                        indeterminate={indeterminate}
                     >
                         Select All
                     </Checkbox>
@@ -78,12 +77,7 @@ const ViewParticipantDrawer = ({selectedMeetingId, onClose}) => {
                     <Checkbox.Group
                         style={{display: "block", whiteSpace: "normal" }}
                         options={participantList.map((attendee) => ({
-                            label: (
-                                <div style={{marginBottom: "8px"}}>
-                                    <div>{attendee.email}</div>
-                                    <div>{attendee.nameWithRole}</div>
-                                </div>
-                            ),
+                            label: attendee.email + ", " + attendee.nameWithRole,
                             value: attendee.email,
                         }))}
                         value={selectedParticipant}

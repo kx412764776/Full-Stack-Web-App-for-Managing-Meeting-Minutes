@@ -70,13 +70,24 @@ public class MinutesController {
 
     // Get meeting list that all attendee in a meeting already signed
     @GetMapping("/signature/signed")
-    public ResponseEntity<?> getSignedMeetingList() {
+    public ResponseEntity<?> getFullSignedMeetingList() {
         // Get meeting list that all attendee in a meeting already signed
         List<MeetingInfoDTO> fullSignedMeetings = signatureService.checkAllAttendeeSigned();
         if (fullSignedMeetings == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(fullSignedMeetings);
+    }
+
+    // Get meeting list that not all attendee in a meeting already signed
+    @GetMapping("/signature/notFullSigned")
+    public ResponseEntity<?> getNotFullSignedMeetingList() {
+        // Get meeting list that not all attendee in a meeting already signed
+        List<MeetingInfoDTO> notFullSignedMeetings = signatureService.getNotAllAttendeeSigned();
+        if (notFullSignedMeetings == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(notFullSignedMeetings);
     }
 
     // Get a table of whether meeting attendees have signed from meeting id
@@ -87,6 +98,28 @@ public class MinutesController {
                 signatureService.getSignatureTableByMeetingId(meetingId);
 
         return ResponseEntity.ok(attendeeSignatureStatusList);
+    }
+
+    // Get signed meeting list by member email
+    @PostMapping("/signature/signed/{memberEmail}")
+    public ResponseEntity<?> getSignedMeetingListByMemberEmail(
+            @PathVariable("memberEmail") String memberEmail) {
+        List<MeetingInfoDTO> signedMeetings = signatureService.getSignedMeetingListByMemberEmail(memberEmail);
+        if (signedMeetings == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(signedMeetings);
+    }
+
+    // Get not signed meeting list by member email
+    @PostMapping("/signature/notSigned/{memberEmail}")
+    public ResponseEntity<?> getNotSignedMeetingListByMemberEmail(
+            @PathVariable("memberEmail") String memberEmail) {
+        List<MeetingInfoDTO> notSignedMeetings = signatureService.getNotSignedMeetingListByMemberEmail(memberEmail);
+        if (notSignedMeetings == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(notSignedMeetings);
     }
 
 }

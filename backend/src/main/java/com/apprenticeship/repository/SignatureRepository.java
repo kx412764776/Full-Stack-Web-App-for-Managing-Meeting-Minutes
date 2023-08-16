@@ -15,7 +15,9 @@ public interface SignatureRepository extends JpaRepository<SignatureInfo, Intege
 
     boolean existsByMemberIdAndMinutesId(Member memberId, MinutesTable minutesId);
 
+    boolean existsByMemberIdAndMinutesId_MeetingId(Member memberId, MeetingTable meetingId);
+
     Optional<List<SignatureInfo>> findAllByMinutesId_MeetingId(MeetingTable meetingId);
 
-    Optional<SignatureInfo> findByMinutesId_MeetingIdAndMemberId_MemberId(MeetingTable minutesId_meetingId, Integer memberId);
+    SignatureInfo findByMinutesId_MeetingIdAndMemberId_MemberId(MeetingTable minutesId_meetingId, Integer memberId);
 }

@@ -1,23 +1,20 @@
-import {getAttendeeInfoByMeetingId} from "../../services/client.js";
+import {getAttendeeInfoByMeetingId, sendEmail} from "../../services/client.js";
 import {useEffect, useState} from "react";
-import {Button, Checkbox, Divider, Space} from "antd";
+import {Button, Checkbox, Divider, message, Space} from "antd";
 
 const SendNotificationForm = ({selectedMeetingId, onClose}) => {
 
     const [participantList, setParticipantList] = useState([]);
     const [selectedParticipant, setSelectedParticipant] = useState([]);
-    const [selectAll, setSelectAll] = useState(false);
+    const indeterminate = selectedParticipant.length > 0 && selectedParticipant.length < participantList.length;
+    const selectAll = selectedParticipant.length === participantList.length;
+
+    const handleSelectParticipant = (emails) => {
+        setSelectedParticipant(emails);
+    }
 
     const handleSelectAll = (e) => {
-        const checked = e.target.checked;
-        setSelectAll(checked);
-        if (checked) {
-            const allEmails = participantList.map((attendee) => attendee.email);
-            console.log(allEmails);
-            setSelectedParticipant(allEmails);
-        } else {
-            setSelectedParticipant([]);
-        }
+        setSelectedParticipant(e.target.checked ? participantList.map((attendee) => attendee.email) : []);
     };
 
     const getParticipantList = async () => {
@@ -35,8 +32,14 @@ const SendNotificationForm = ({selectedMeetingId, onClose}) => {
         }
     };
 
-    const handleSendNotification = () => {
-
+    const handleSendNotification = async () => {
+        try {
+            await sendEmail(selectedMeetingId, selectedParticipant);
+            onClose();
+            message.success("Notification email sent to " + selectedParticipant.join(", "), 5);
+        } catch (error) {
+            message.error("Error sending notification email to " + selectedParticipant.join(", "), 5);
+        }
     }
 
     useEffect(() => {
@@ -49,6 +52,7 @@ const SendNotificationForm = ({selectedMeetingId, onClose}) => {
                 style={{marginBottom: 10}}
                 checked={selectAll}
                 onChange={handleSelectAll}
+                indeterminate={indeterminate}
             >
                 Select All
             </Checkbox>
@@ -56,17 +60,11 @@ const SendNotificationForm = ({selectedMeetingId, onClose}) => {
             <Checkbox.Group
                 style={{display: "block", whiteSpace: "normal"}}
                 options={participantList.map((attendee) => ({
-                    label: (
-                        <Space direction="vertical" >
-                            {attendee.email}{attendee.nameWithRole}
-                        </Space>
-                    ),
+                    label: attendee.email + ", " + attendee.nameWithRole,
                     value: attendee.email,
                 }))}
                 value={selectedParticipant}
-                onChange={(email) => {
-                    setSelectedParticipant(email);
-                }}
+                onChange={handleSelectParticipant}
             />
             <Space style={{position: "absolute", bottom: 20, left: 25}}>
                 <Button

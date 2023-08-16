@@ -132,28 +132,5 @@ public class MeetingTable {
         this.meetingDescription = meetingDescription;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MeetingTable meetingTable = (MeetingTable) o;
-        return Objects.equals(meetingId, meetingTable.meetingId) && Objects.equals(meetingTopic, meetingTable.meetingTopic) && Objects.equals(meetingName, meetingTable.meetingName) && Objects.equals(meetingDate, meetingTable.meetingDate) && Objects.equals(meetingDuration, meetingTable.meetingDuration) && Objects.equals(meetingDescription, meetingTable.meetingDescription);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(meetingId, meetingTopic, meetingName, meetingDate, meetingDuration, meetingDescription);
-    }
-
-    @Override
-    public String toString() {
-        return "Meeting{" +
-               "meetingId=" + meetingId +
-               ", meetingTopic='" + meetingTopic + '\'' +
-               ", meetingName='" + meetingName + '\'' +
-               ", meetingDate=" + meetingDate +
-               ", meetingDuration='" + meetingDuration + '\'' +
-               ", meetingDescription='" + meetingDescription + '\'' +
-               '}';
-    }
 }

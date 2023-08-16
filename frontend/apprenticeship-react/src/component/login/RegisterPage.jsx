@@ -40,7 +40,7 @@ const RegisterForm = ({ onSuccess }) => {
                         .required("Password is required"),
                     memberRole: Yup.string()
                         .oneOf(
-                            ['APPRENTICESHIP', 'MENTOR', 'ACADEMIC'],
+                            ['APPRENTICE', 'MENTOR', 'ACADEMIC'],
                             'Invalid Role'
                         )
                         .required("Role is required")
@@ -119,7 +119,7 @@ const RegisterForm = ({ onSuccess }) => {
                             name={"memberRole"}
                         >
                             <option value="">Select your role</option>
-                            <option value="APPRENTICESHIP">Apprenticeship</option>
+                            <option value="APPRENTICE">Apprentice</option>
                             <option value="MENTOR">Mentor</option>
                             <option value="ACADEMIC">Academic</option>
                         </MySelect>

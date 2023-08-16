@@ -1,7 +1,7 @@
 import {Formik} from "formik";
 import * as Yup from "yup";
 import {saveMeeting} from "../../services/client.js";
-import {Button, DatePicker, Form, Input, Space} from 'antd';
+import {Button, DatePicker, Form, Input, message, Space} from 'antd';
 
 const CreateMeetingForm = () => {
 
@@ -29,16 +29,14 @@ const CreateMeetingForm = () => {
                 meetingDescription: Yup.string()
             })}
             onSubmit={(meeting, {setSubmitting}) => {
-                console.log("Form submitted!")
                 setSubmitting(true);
                 // transform meeting date to timestamp and save meeting to database
                 saveMeeting({
                     ...meeting,
                     meetingDate: meeting.meetingDate.toISOString()
                 })
-                    .then(res => {
-                        console.log(res);
-
+                    .then(() => {
+                        message.success(`Meeting ${meeting.meetingName} created successfully`);
                     }).catch(err => {
                     console.log(err);
                 }).finally(() => {
