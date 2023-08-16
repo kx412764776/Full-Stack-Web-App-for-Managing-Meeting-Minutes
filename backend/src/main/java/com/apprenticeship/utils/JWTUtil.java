@@ -59,6 +59,7 @@ public class JWTUtil {
         return getClaims(token).getSubject();
     }
 
+    // Decode the JWT token and return the claims.
     private Claims getClaims(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -68,15 +69,18 @@ public class JWTUtil {
         return claims;
     }
 
+    // Return a Key object that is used to sign the JWT token.
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
+    // check if the token is expired and the subject is the same as the username.
     public boolean isTokenValid(String jwt, String username) {
         String subject = getSubject(jwt);
         return subject.equals(username) && !isTokenExpired(jwt);
     }
 
+    // check if the token is expired.
     private boolean isTokenExpired(String jwt) {
         return getClaims(jwt).getExpiration().before(Date.from(Instant.now()));
     }

@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,16 +35,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
     /**
      * This method is aimed to judge whether the request is with a Bearer token.
-     * @param request
-     * @param response
-     * @param filterChain
-     * @throws ServletException
-     * @throws IOException
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
 
@@ -53,6 +49,7 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
+        // Get the token from the header.
         String jwt = authHeader.substring(7);
         String subject = jwtUtil.getSubject(jwt);
 
@@ -68,12 +65,15 @@ public class JWTFilter extends OncePerRequestFilter {
                                 null,
                                 userDetails.getAuthorities()
                         );
+                // Set the details of the authentication.
                 authenticationToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
+                // Set the authentication to the context of the security.
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }
+        // Filter the request.
         filterChain.doFilter(request, response);
     }
 }
