@@ -51,8 +51,4 @@ public class LoginService {
         String token = jwtUtil.issueToken(memberDTO.username(), memberDTO.memberRoles());
         return new LoginResponse(memberDTO, token);
     }
-
-
-
-
 }

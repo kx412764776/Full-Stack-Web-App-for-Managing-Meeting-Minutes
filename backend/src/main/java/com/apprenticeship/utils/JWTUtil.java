@@ -41,15 +41,17 @@ public class JWTUtil {
             Map<String, Object> claims) {
 
         String token = Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuer("http://apprenticeship.com")
+                .setClaims(claims) // set jwt claims in the payload
+                .setSubject(subject) // set subject in the payload
+                .setIssuer("http://apprenticeship.com") // set issuer in the payload
                 .setIssuedAt(Date.from(Instant.now()))
+                // set expiration time in the payload (15 days)
                 .setExpiration(
                         Date.from(
                                 Instant.now().plus(15, DAYS)
                         )
                 )
+                // set signature algorithm and secret key
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
         return token;
@@ -61,11 +63,12 @@ public class JWTUtil {
 
     // Decode the JWT token and return the claims.
     private Claims getClaims(String token) {
+
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+                .setSigningKey(getSigningKey()) // Set the key to verify the signature.
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseClaimsJws(token) // Parse the token.
+                .getBody(); // Get the claims.
         return claims;
     }
 
@@ -75,9 +78,9 @@ public class JWTUtil {
     }
 
     // check if the token is expired and the subject is the same as the username.
-    public boolean isTokenValid(String jwt, String username) {
+    public boolean isTokenValid(String jwt, String email) {
         String subject = getSubject(jwt);
-        return subject.equals(username) && !isTokenExpired(jwt);
+        return subject.equals(email) && !isTokenExpired(jwt);
     }
 
     // check if the token is expired.
