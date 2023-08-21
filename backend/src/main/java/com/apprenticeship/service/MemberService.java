@@ -95,7 +95,11 @@ public class MemberService {
                 .toList();
     }
 
-    // check if email exists in database and return email and first name
+    /**
+     * check if email exists in database and return email and first name
+     * @param emailPrefix request email prefix
+     * @return list of email and first name based on email prefix
+     */
     public List<String> checkMembersByEmailPrefix(String emailPrefix) {
         List<Member> members = memberRepository.findTop10ByEmailStartingWith(emailPrefix);
         // joint email and first name and return

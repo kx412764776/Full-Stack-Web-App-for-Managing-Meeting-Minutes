@@ -46,8 +46,10 @@ public class LoginService {
                         request.password()
                 )
         );
-        Object principal = authentication.getPrincipal();
-        MemberDTO memberDTO = memberDTOMapper.apply((Member) principal);
+
+
+        Member principal = (Member) authentication.getPrincipal();
+        MemberDTO memberDTO = memberDTOMapper.apply(principal);
         String token = jwtUtil.issueToken(memberDTO.username(), memberDTO.memberRoles());
         return new LoginResponse(memberDTO, token);
     }

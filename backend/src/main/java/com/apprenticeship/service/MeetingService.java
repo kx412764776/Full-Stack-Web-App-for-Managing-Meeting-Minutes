@@ -61,12 +61,17 @@ public class MeetingService {
         return meetingInfoList;
     }
 
+    /**
+     * This method is used to insert the meeting information to the meeting table
+     */
     public MeetingTable insertMeetingInfo(MeetingTable meetingTableInfo) {
         meetingRepository.save(meetingTableInfo);
         return meetingTableInfo;
     }
 
-    // Get all meetings information
+    /**
+     * Get all meeting information from the meeting table
+     */
     public List<MeetingInfoDTO> getAllMeetingInfo() {
         List<MeetingInfoDTO> meetingInfoList = meetingRepository.findAll()
                 .stream()
@@ -75,8 +80,14 @@ public class MeetingService {
         return meetingInfoList;
     }
 
-    // According to the email and meetingId to insert the information to the attendee table
+    /**
+     * According to the email and meetingId to insert the information to the attendee table
+     * @param email email list from request body
+     * @param meetingId meetingId from request body
+     * @return attendee info list
+     */
     public List<AttendeeTable> insertAttendeeInfo(List<String> email, Integer meetingId) {
+
         // Step1: According to the every email in the member table
         // by separate email list to find every corresponding memberID
         List<Member> members = email.stream()
@@ -85,7 +96,6 @@ public class MeetingService {
                         ("member with email [%s] not found".formatted(member))
                 )))
                 .toList();
-
 
         // Step 2: According to the meetingId to find the corresponding meeting information
         MeetingTable meetingTableInfo = meetingRepository.findMeetingTableByMeetingId(meetingId)
@@ -112,7 +122,11 @@ public class MeetingService {
         return attendeeTableList;
     }
 
-    // According to the meetingId to get the attendee information
+    /**
+     * According to the meetingId to get the attendee information
+      * @param meetingId meetingId from request body
+     * @return member email, firstName, lastName and memberRole String list
+     */
     public List<String> getAttendeeInfoByMeetingId(Integer meetingId) {
         // According to the meetingId to find the corresponding meeting information
         MeetingTable meetingTableInfo = meetingRepository.findMeetingTableByMeetingId(meetingId)
@@ -138,7 +152,11 @@ public class MeetingService {
         return attendeeInfo;
     }
 
-    // According to the meetingId and memberEmails to delete the information from the attendee table
+    /**
+     * According to the meetingId and memberEmails to delete the information from the attendee table
+     * @param meetingId meetingId from request body
+     * @param memberEmails memberEmails from request body
+     */
     @Transactional(
             rollbackFor = {IllegalStateException.class, ResourceNotFoundException.class}
     )
@@ -160,8 +178,8 @@ public class MeetingService {
         // According to the meetingId and memberId to delete the information from the attendee table
         members.forEach(member -> {
             if (!attendeeRepository.existsByMemberIdAndMeetingId(member, meetingTableInfo)) {
-                throw new IllegalStateException(
-                        ("member with email [%s] not exists in meeting with meetingId [%s]"
+                throw new ResourceNotFoundException(
+                        ("member with email [%s] does not exist in meeting with meetingId [%s]"
                                 .formatted(member.getEmail(), meetingId))
                 );
             }
@@ -170,6 +188,9 @@ public class MeetingService {
 
     }
 
+    /**
+     * According to the meetingId to get the meeting information
+     */
     public MeetingInfoDTO getMeetingInfoByMeetingId(Integer meetingId) {
         MeetingTable meetingTableInfo = meetingRepository.findMeetingTableByMeetingId(meetingId)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -179,6 +200,9 @@ public class MeetingService {
         return meetingInfoDTO;
     }
 
+    /**
+     * According to the meetingId to get the meeting information
+     */
     public MeetingTable getMeetingInfoById(Integer meetingId) {
         MeetingTable meetingTableInfo = meetingRepository.findMeetingTableByMeetingId(meetingId)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -237,6 +261,9 @@ public class MeetingService {
 
     }
 
+    /**
+     * This method is used to delete the meeting information by meetingId
+     */
     public void deleteMeetingInfoByMeetingId(Integer meetingId) {
         // According to the meetingId to find the corresponding meeting information
         MeetingTable meetingInfo = meetingRepository.findMeetingTableByMeetingId(meetingId)
@@ -260,7 +287,5 @@ public class MeetingService {
         signatureInfoList.ifPresent(signatureRepository::deleteAll);
 
         meetingRepository.delete(meetingInfo);
-
-
     }
 }

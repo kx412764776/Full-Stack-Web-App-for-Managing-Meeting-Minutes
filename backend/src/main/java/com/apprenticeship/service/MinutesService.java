@@ -66,7 +66,7 @@ public class MinutesService {
         minutesRepository.save(minutesTable);
     }
 
-/**
+    /**
      * Method: Get minutes information by meeting id
      * @param meetingId
      * @return minutes content

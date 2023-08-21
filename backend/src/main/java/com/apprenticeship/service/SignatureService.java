@@ -4,6 +4,7 @@ import com.apprenticeship.dto.MeetingInfoDTO;
 import com.apprenticeship.dto.MeetingInfoDTOMapper;
 import com.apprenticeship.dto.SignatureStatusDTO;
 import com.apprenticeship.enums.MemberRole;
+import com.apprenticeship.exception.DuplicateResourceException;
 import com.apprenticeship.exception.ResourceNotFoundException;
 import com.apprenticeship.model.*;
 import com.apprenticeship.repository.*;
@@ -40,7 +41,9 @@ public class SignatureService {
         this.meetingInfoDTOMapper = meetingInfoDTOMapper;
     }
 
-    // store signature information according to meeting id and member email
+    /**
+     * store signature information according to meeting id and member email
+     */
     public void storeSignatureInfo(Integer meetingId, String memberEmail) {
 
         // get minutes object from meeting id
@@ -51,8 +54,11 @@ public class SignatureService {
 
         // check if the member has already signed
         if (signatureRepository.existsByMemberIdAndMinutesId(member, minutesTable)) {
-            throw new IllegalStateException(
-                    "Member with email " + memberEmail + " has already signed."
+            throw new DuplicateResourceException(
+                    "Member with email [%s] has already signed minutes with meeting id [%d]".formatted(
+                            memberEmail,
+                            meetingId
+                    )
             );
         }
 
@@ -81,18 +87,17 @@ public class SignatureService {
 
     /**
      * Get minutes table object from meeting id
-     *
      * @param meetingId
      * @return minutes table object
      */
     private MinutesTable getMinutesTableFromMeetingId(Integer meetingId) {
         return minutesRepository.findMinutesTableByMeetingId(
                 meetingRepository.findMeetingTableByMeetingId(meetingId)
-                        .orElseThrow(() -> new IllegalStateException(
-                                "Meeting with id " + meetingId + " does not exist."
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                "Meeting with id [%d] does not exist.".formatted(meetingId)
                         ))
-        ).orElseThrow(() -> new IllegalStateException(
-                "Minutes with meeting id " + meetingId + " does not exist."
+        ).orElseThrow(() -> new ResourceNotFoundException(
+                "Minutes with meeting id [%d] does not exist.".formatted(meetingId)
         ));
     }
 
@@ -104,8 +109,8 @@ public class SignatureService {
      */
     private Member getMemberFromMemberEmail(String memberEmail) {
         return memberRepository.findMemberByEmail(memberEmail)
-                .orElseThrow(() -> new IllegalStateException(
-                        "Member with email " + memberEmail + " does not exist."
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Member with email [%s] does not exist.".formatted(memberEmail)
                 ));
     }
 
@@ -131,7 +136,6 @@ public class SignatureService {
 
     /**
      * check if all attendee in a meeting already signed minutes
-     *
      * @param meetingId
      * @return true if all attendee in a meeting already signed minutes
      */
@@ -142,7 +146,7 @@ public class SignatureService {
         // Get signature list of the meeting
         List<SignatureInfo> signatureList = signatureRepository.findAllByMinutesId_MeetingId(meetingId)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Signature with meeting id " + meetingId + " does not exist."
+                        "Signature with meeting id [%d] does not exist.".formatted(meetingId.getMeetingId())
                 ));
 
         // Check if all attendee in a meeting already signed
@@ -189,7 +193,8 @@ public class SignatureService {
         // Get signature list of the meeting
         List<SignatureInfo> signatureList = signatureRepository.findAllByMinutesId_MeetingId(meetingTable)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Signature with meeting id " + meetingTable.getMeetingId() + " does not exist."
+                        "Signature with meeting id [%d] does not exist."
+                                .formatted(meetingTable.getMeetingId())
                 ));
 
         // Check if there has at least one attendee in a meeting not signed
@@ -197,18 +202,16 @@ public class SignatureService {
             for (SignatureInfo signature : signatureList) {
                 if (attendee.getMemberId().getMemberId().equals(signature.getMemberId().getMemberId())) {
                     return false;
-                }
-            }
+                }}
         }
-
         return true;
     }
 
     // Get a table of whether meeting attendees have signed from meeting id
     public List<SignatureStatusDTO> getSignatureTableByMeetingId(Integer meetingId) {
         MeetingTable meetingTable = meetingRepository.findMeetingTableByMeetingId(meetingId)
-                .orElseThrow(() -> new IllegalStateException(
-                        "Meeting with id " + meetingId + " does not exist."
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Meeting with id [%d] does not exist.".formatted(meetingId)
                 ));
 
         // Get attendee whether signed from meeting id
@@ -230,7 +233,6 @@ public class SignatureService {
 
     /**
      * Check if attendee has signed
-     *
      * @param meetingId
      * @param memberId
      * @return
@@ -238,7 +240,7 @@ public class SignatureService {
     private boolean isAttendeeSigned(Integer meetingId, Integer memberId) {
         MeetingTable selectedMeeting = meetingRepository.findMeetingTableByMeetingId(meetingId)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Meeting with id " + meetingId + " does not exist."
+                        "Meeting with id [%d] does not exist.".formatted(meetingId)
                 ));
 
 
