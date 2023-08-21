@@ -41,7 +41,6 @@ const ViewParticipantDrawer = ({selectedMeetingId, onClose}) => {
         }
     };
 
-
     const handleSelectAll = (e) => {
         const checked = e.target.checked;
         if (checked) {

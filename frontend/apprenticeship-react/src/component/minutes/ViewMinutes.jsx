@@ -26,8 +26,6 @@ const ViewMinutes = () => {
     // control if the approve radio button been chosen
     const [isChoseApproveRadio, setIsChoseApproveRadio] = useState(false);
 
-
-
     const onClose = () => {
         setDrawerVisible(false);
     }
@@ -68,7 +66,6 @@ const ViewMinutes = () => {
         }
     }
 
-
     useEffect(() => {
         const fetchMeetingInfo = async () => {
             const response = await getMeetingInfoByMeetingId(meetingId);
@@ -82,7 +79,6 @@ const ViewMinutes = () => {
         fetchMeetingInfo();
 
     }, [meetingId, minutes, whetherApprove]);
-
 
     return (
         <>
@@ -111,18 +107,18 @@ const ViewMinutes = () => {
                         </Button>
 
                         {memberInfo.memberRoles == 'ACADEMIC' && (
-                        <Button
-                            type="primary"
-                            onClick={() => {
-                                setDrawerVisible(true);
-                            }}
-                            style={{
-                                marginTop: '10px',
-                                width: '100%'
-                            }}
-                        >
-                            Send Notification
-                        </Button>
+                            <Button
+                                type="primary"
+                                onClick={() => {
+                                    setDrawerVisible(true);
+                                }}
+                                style={{
+                                    marginTop: '10px',
+                                    width: '100%'
+                                }}
+                            >
+                                Send Notification
+                            </Button>
                         )}
                     </Space>
                 </Col>

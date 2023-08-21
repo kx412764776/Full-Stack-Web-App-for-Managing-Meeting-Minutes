@@ -78,6 +78,7 @@ export const getMeetingInfoByMeetingId = async (meetingId) => {
         return await axios.post(
             `http://localhost:8090/apprenticeship/meeting/meetingInfo/${meetingId}`,
             meetingId,
+            getAuthConfig()
         )
     } catch (error) {
         console.log(error);
@@ -100,7 +101,8 @@ export const saveMeeting = async (meeting) => {
     try {
         return await axios.post(
             `http://localhost:8090/apprenticeship/meeting`,
-            meeting
+            meeting,
+            getAuthConfig()
         );
     } catch (error) {
         console.log(error);
@@ -138,7 +140,8 @@ export const addParticipantAndMeetingToAttendeeTable = async (emails, meetingId)
     try {
         return await axios.post(
             'http://localhost:8090/apprenticeship/meeting/attendee',
-            insertAttendee
+            insertAttendee,
+            getAuthConfig()
         );
     } catch (error) {
         console.log(error);
@@ -150,6 +153,7 @@ export const getAttendeeInfoByMeetingId = async (meetingId) => {
         return await axios.post(
             `http://localhost:8090/apprenticeship/meeting/attendee/${meetingId}`,
             meetingId,
+            getAuthConfig()
         )
     } catch (error) {
         console.log(error);

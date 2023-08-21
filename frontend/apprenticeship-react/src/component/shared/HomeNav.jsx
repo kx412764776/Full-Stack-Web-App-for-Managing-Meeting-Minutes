@@ -21,7 +21,6 @@ import {LoginAuth} from "../context/LoginContext.jsx";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 
-
 export function HomeNav() {
 
     const {memberInfo, logOut} = LoginAuth();
@@ -62,7 +61,7 @@ export function HomeNav() {
                 </Flex>
 
                 <Flex flex={{base: 1, md: 1}} justify="flex-end" align="center">
-                    <Box mr={4}>{memberInfo.memberRoles}</Box>
+                    <Box mr={4}>{memberInfo.memberRoles}: {memberInfo.firstName}</Box>
                     <Menu>
                         <MenuButton
                             as={IconButton}
@@ -81,9 +80,6 @@ export function HomeNav() {
                                     {memberInfo.email}
                                 </Text>
                                 <MenuDivider/>
-                                <MenuItem>
-                                    Account Settings
-                                </MenuItem>
                                 <MenuItem
                                     onClick={() => {
                                         navigate(`/`)
@@ -196,21 +192,5 @@ const NAV_ITEMS = [
                 href: '/apprenticeship/minutes/unFullSigned',
             }
         ],
-    },
-    {
-        label: 'About',
-        children: [
-            {
-                label: 'About Us',
-                subLabel: 'Find out more about this website',
-                href: '/apprenticeship/about',
-            },
-            {
-                label: 'Feedback',
-                subLabel: 'Give us your feedback!',
-                href: '/apprenticeship/feedback',
-            },
-        ],
-    },
+    }
 ];
-

@@ -9,7 +9,6 @@ import { Link } from 'react-router-dom';
 
 export default function WelcomePage() {
 
-
     return (
         <Container maxW={'5xl'}>
             <Stack
