@@ -395,11 +395,16 @@ class SignatureServiceTest {
         List<AttendeeTable> attendeeList1 = List.of(attendee1);
         List<AttendeeTable> attendeeList2 = List.of(attendee2);
         List<SignatureInfo> signatureList1 = List.of(signature1);
+        List<SignatureInfo> signatureList2 = List.of();
 
         when(meetingRepository.findAll()).thenReturn(List.of(meeting1, meeting2));
         when(attendeeRepository.findAllByMeetingId(meeting1)).thenReturn(attendeeList1);
         when(attendeeRepository.findAllByMeetingId(meeting2)).thenReturn(attendeeList2);
-        when(signatureRepository.findAllByMinutesId_MeetingId(meeting1)).thenReturn(Optional.of(signatureList1));
+
+        when(signatureRepository.findAllByMinutesId_MeetingId(meeting1))
+                .thenReturn(Optional.of(signatureList1));
+        when(signatureRepository.findAllByMinutesId_MeetingId(meeting2))
+                .thenReturn(Optional.of(signatureList2));
 
         // When
         List<MeetingInfoDTO> result = signatureService.getNotAllAttendeeSigned();
