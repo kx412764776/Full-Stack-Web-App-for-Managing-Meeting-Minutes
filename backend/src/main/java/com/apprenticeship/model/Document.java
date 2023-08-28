@@ -9,15 +9,15 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(
-        name = "fileStorage",
+        name = "document",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "file_storage_id_unique",
+                        name = "document_id_unique",
                         columnNames = "fileId"
                 )
         }
 )
-public class FileStorage {
+public class Document {
 
     @Id
     @SequenceGenerator(
@@ -59,14 +59,14 @@ public class FileStorage {
 
     private LocalDateTime uploadDateTime;
 
-    public FileStorage() {
+    public Document() {
     }
 
-    public FileStorage(MeetingTable meetingId,
-                       String fileName,
-                       String fileType,
-                       String fileUrl,
-                       LocalDateTime uploadDateTime) {
+    public Document(MeetingTable meetingId,
+                    String fileName,
+                    String fileType,
+                    String fileUrl,
+                    LocalDateTime uploadDateTime) {
         this.meetingId = meetingId;
         this.fileName = fileName;
         this.fileType = fileType;
