@@ -23,16 +23,12 @@ public class JWTUtil {
     private static final String SECRET_KEY =
             "manage_your_apprenticeship_meetings_secret_key";
 
-    public String issueToken(String subject) {
-        return issueToken(subject, Map.of());
+    public String issueToken(String subject, String ...memberRole) {
+        return issueToken(subject, Map.of("member_role", memberRole));
     }
 
-    public String issueToken(String subject, String ...scopes) {
-        return issueToken(subject, Map.of("scopes", scopes));
-    }
-
-    public String issueToken(String subject, List<String> scopes) {
-        return issueToken(subject, Map.of("scopes", scopes));
+    public String issueToken(String subject, List<String> memberRole) {
+        return issueToken(subject, Map.of("member_role", memberRole));
     }
 
     // This method is used to generate a JWT token and set expiration time.

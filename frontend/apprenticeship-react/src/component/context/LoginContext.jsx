@@ -21,7 +21,7 @@ const LoginAuthProvider = ({children}) => {
             const memberEmail = token.sub;
             setMember({
                 username: memberEmail,
-                roles: token.scopes
+                roles: token.member_role
             })
             fetchMemberInfo(memberEmail);
         }
@@ -50,7 +50,7 @@ const LoginAuthProvider = ({children}) => {
 
                 setMember({
                     username: decodedToken.sub,
-                    roles: decodedToken.scopes
+                    roles: decodedToken.member_role
                 })
 
                 resolve(res);
@@ -71,6 +71,8 @@ const LoginAuthProvider = ({children}) => {
             return false;
         }
         const {exp: expiration} = jwtDecode(token);
+        // transform expiration to milliseconds because exp in jwtToken is in seconds
+        // if current time is greater than expiration time, then token is expired
         if (Date.now() > expiration * 1000) {
             logOut()
             return false;

@@ -40,16 +40,18 @@ public class LoginService {
      * @return
      */
     public LoginResponse login(LoginRequest request) {
+        // authenticate the member by username(email) and password
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.username(),
                         request.password()
                 )
         );
-
-
+        // get the member from the authentication
         Member principal = (Member) authentication.getPrincipal();
+        // convert the member to memberDTO
         MemberDTO memberDTO = memberDTOMapper.apply(principal);
+        // issue a token for the member
         String token = jwtUtil.issueToken(memberDTO.username(), memberDTO.memberRoles());
         return new LoginResponse(memberDTO, token);
     }

@@ -43,7 +43,6 @@ public class Feedback {
             nullable = false
     )
     private Member memberId;
-
     private Date feedbackDate;
     private String feedbackContent;
 

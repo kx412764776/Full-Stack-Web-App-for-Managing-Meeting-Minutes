@@ -46,7 +46,7 @@ public class SecurityFilterChainConfig {
                 // set the authorization for the requests
                 .authorizeHttpRequests((authorizeHttpRequest) ->
                         authorizeHttpRequest.
-                                // permit all the requests to register and login, other requests need to be authenticated
+                                // permit the requests to register and login, other requests need to be authenticated
                                 requestMatchers(
                                         HttpMethod.POST,
                                         "/apprenticeship/register",

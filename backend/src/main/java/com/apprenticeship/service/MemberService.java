@@ -7,13 +7,11 @@ import com.apprenticeship.exception.ResourceNotFoundException;
 import com.apprenticeship.model.Member;
 import com.apprenticeship.repository.MemberRepository;
 import com.apprenticeship.requestsAndResponses.MemberRegistrationRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This class is responsible for handling the business logic of controlling members in the database.
@@ -38,7 +36,7 @@ public class MemberService {
     /**
      * This method is responsible for register a member to the database.
      */
-    public void registerMember(MemberRegistrationRequest memberRegistrationRequest) {
+    public void registerMember(@NotNull MemberRegistrationRequest memberRegistrationRequest) {
 
         // check if email exist
         if (memberRepository.existsMemberByEmail(memberRegistrationRequest.email())) {
@@ -58,7 +56,6 @@ public class MemberService {
                 encodedPassword,
                 memberRegistrationRequest.memberRole());
         memberRepository.save(member);
-
     }
 
     /**
