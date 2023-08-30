@@ -35,7 +35,6 @@ export function HomeNav() {
         }
     }, [memberInfo, navigate]);
 
-
     return (
         <Box >
             <Flex

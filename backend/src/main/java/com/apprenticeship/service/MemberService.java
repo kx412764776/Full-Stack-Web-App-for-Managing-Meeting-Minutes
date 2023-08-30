@@ -36,7 +36,7 @@ public class MemberService {
     /**
      * This method is responsible for register a member to the database.
      */
-    public void registerMember(@NotNull MemberRegistrationRequest memberRegistrationRequest) {
+    public MemberDTO registerMember(@NotNull MemberRegistrationRequest memberRegistrationRequest) {
 
         // check if email exist
         if (memberRepository.existsMemberByEmail(memberRegistrationRequest.email())) {
@@ -56,6 +56,8 @@ public class MemberService {
                 encodedPassword,
                 memberRegistrationRequest.memberRole());
         memberRepository.save(member);
+
+        return memberDTOMapper.apply(member);
     }
 
     /**

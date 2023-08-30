@@ -1,7 +1,7 @@
 import {useField} from "formik";
 import {Alert, AlertIcon, Box, FormLabel, Input, Select} from "@chakra-ui/react";
 
-
+// These two component is from the chakra-ui
 const MyTextInput = ({label, ...props}) => {
     const [field, meta] = useField(props);
     return (

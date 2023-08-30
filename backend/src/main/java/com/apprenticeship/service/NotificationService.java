@@ -43,7 +43,6 @@ public class NotificationService {
     public void sendEmail(Member memberEmail, MeetingTable meetingTable) {
         // Get the recipient email from the member table
         String recipientEmail = memberEmail.getEmail();
-
         try {
             // Create HTML email and set the sender email, recipient email, subject, and content
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -72,9 +71,10 @@ public class NotificationService {
 
             // save the email record to notification table
             saveNotification(meetingTable, memberEmail, emailSubject, content, 1);
-
         } catch (MessagingException e) {
-            saveNotification(meetingTable, memberEmail, "Email Sending Failed", e.getMessage(), 0);
+            saveNotification(
+                    meetingTable, memberEmail, "Email Sending Failed", e.getMessage(), 0
+            );
         }
     }
 

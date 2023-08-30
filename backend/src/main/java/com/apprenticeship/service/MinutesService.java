@@ -36,7 +36,6 @@ public class MinutesService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         ("meeting with id [%s] not found".formatted(meetingId))
                 ));
-
         // If the meeting id exists in the minutes table, update the minutes content
         if (minutesRepository.existsByMeetingId(meetingTable)) {
             // get minutes table from meeting id
@@ -52,15 +51,11 @@ public class MinutesService {
             minutesRepository.save(minutesTable);
             return;
         }
-
         String meetingName = meetingTable.getMeetingName();
-
         // get meeting date from meeting id and transform to string
         String meetingDate = meetingTable.getMeetingDate().toString().split(" ")[0];
-
         // generate minute name
         String minutesFilename = meetingName + "_Minutes_" + meetingDate;
-
         MinutesTable minutesTable = new MinutesTable(meetingTable, minutesFilename, minutesContent);
         // insert new minute
         minutesRepository.save(minutesTable);

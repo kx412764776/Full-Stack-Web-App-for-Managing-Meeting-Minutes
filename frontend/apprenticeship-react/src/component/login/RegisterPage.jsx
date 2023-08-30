@@ -9,6 +9,7 @@ import {
     Link
 } from '@chakra-ui/react'
 import {ArrowBackIcon, ViewIcon, ViewOffIcon} from '@chakra-ui/icons'
+import {message} from "antd";
 import {Form, Formik} from "formik";
 import * as Yup from "yup";
 import {MySelect, MyTextInput} from "../FormComponent.jsx";
@@ -56,14 +57,18 @@ const RegisterForm = ({ onSuccess }) => {
                 setSubmitting(true);
                 register(member)
                     .then(res => {
-                    window.location.href = "/apprenticeship/login";
-                    onSuccess(res.headers["authorization"]);
-                }).catch(err => {
+                        if (res.status == 200) {
+                            window.location.href = "/apprenticeship/login";
+                            onSuccess(res.headers["authorization"]);
+                        }
+                    }).catch(err => {
                     console.log(err);
+                    message.error("Email already registered");
                 }).finally(() => {
                     setSubmitting(false);
                 })
-            }}>
+            }}
+        >
 
             {({isValid, isSubmitting}) => (
                 <Form>
@@ -111,7 +116,7 @@ const RegisterForm = ({ onSuccess }) => {
                                   right='12%'
                             >
                                 Show your password
-                                </Text>
+                            </Text>
                         </Box>
 
                         <MySelect

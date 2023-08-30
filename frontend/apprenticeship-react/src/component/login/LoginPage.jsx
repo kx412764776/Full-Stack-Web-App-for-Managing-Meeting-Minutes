@@ -9,6 +9,7 @@ import {
     Text,
 } from '@chakra-ui/react'
 import {ArrowBackIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
+import {message} from "antd";
 import {Form, Formik} from "formik";
 import * as Yup from 'yup';
 import {LoginAuth} from "../context/LoginContext.jsx";
@@ -36,10 +37,13 @@ const LoginForm = () => {
             initialValues={{username: '', password: ''}}
             onSubmit={(values, {setSubmitting}) => {
                 setSubmitting(true);
-                login(values).then(() => {
-                    window.location.href = "/apprenticeship/meeting"
+                login(values).then((res) => {
+                    if (res.status == 200) {
+                        window.location.href = "/apprenticeship/meeting"
+                    }
                 }).catch(err => {
                     console.log(err)
+                    message.error("Invalid username or password")
                 }).finally(() => {
                     setSubmitting(false);
                 })

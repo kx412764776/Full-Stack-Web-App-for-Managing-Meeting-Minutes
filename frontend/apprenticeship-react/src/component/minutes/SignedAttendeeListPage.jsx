@@ -119,22 +119,21 @@ const SignedAttendeeListPage = () => {
 
             <Divider/>
             <Row gutter={16}
-                    style={{
-                        padding: '0 50px',
-                        marginTop: '10px',
-                    }}
+                 style={{
+                     padding: '0 50px',
+                     marginTop: '10px',
+                 }}
             >
                 <Col span={24}>
                     <Table
                         columns={columns}
-                        dataSource={signatureList}
+                        dataSource={signatureList.map((item, index) => ({ ...item, key: index }))}
                         title={() => 'Signature List'}
                     />
                 </Col>
             </Row>
         </>
     )
-
 }
 
 export default SignedAttendeeListPage;

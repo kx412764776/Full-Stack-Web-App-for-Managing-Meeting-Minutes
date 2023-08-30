@@ -14,6 +14,7 @@ const LoginAuthProvider = ({children}) => {
     const [member, setMember] = useState(null);
     const [memberInfo, setMemberInfo] = useState({});
 
+    // decode token to get member email and roles and set member state
     const setMemberFromToken = () => {
         let token = localStorage.getItem("access_token");
         if (token) {
@@ -43,6 +44,7 @@ const LoginAuthProvider = ({children}) => {
     const login = async (usernameAndPassword) => {
         return new Promise((resolve, reject) => {
             performLogin(usernameAndPassword).then(res => {
+
                 const jwtToken = res.headers["authorization"];
                 localStorage.setItem("access_token", jwtToken);
 

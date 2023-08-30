@@ -18,11 +18,11 @@ const EditMeetingInfoForm = ({meetingId, onClose}) => {
         try {
             await getMeetingInfoByMeetingId(meetingId)
                 .then(res => {
-                        setMeetingTopic(res.data.meetingTopic);
-                        setMeetingName(res.data.meetingName);
-                        setMeetingDate(res.data.meetingDate);
-                        setMeetingDuration(res.data.meetingDuration);
-                        setMeetingDescription(res.data.meetingDescription);
+                    setMeetingTopic(res.data.meetingTopic);
+                    setMeetingName(res.data.meetingName);
+                    setMeetingDate(res.data.meetingDate);
+                    setMeetingDuration(res.data.meetingDuration);
+                    setMeetingDescription(res.data.meetingDescription);
                 })
         } catch (e) {
             console.log(e);
@@ -170,8 +170,8 @@ const EditMeetingInfoForm = ({meetingId, onClose}) => {
                     </Form>
                 )}
             </Formik>
-            </>
-            )
-            }
+        </>
+    )
+}
 
 export default EditMeetingInfoForm;

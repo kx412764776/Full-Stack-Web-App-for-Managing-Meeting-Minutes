@@ -1,5 +1,6 @@
 package com.apprenticeship.controller;
 
+import com.apprenticeship.dto.MemberDTO;
 import com.apprenticeship.utils.JWTUtil;
 import com.apprenticeship.requestsAndResponses.LoginRequest;
 import com.apprenticeship.requestsAndResponses.LoginResponse;
@@ -38,7 +39,10 @@ public class LoginController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody MemberRegistrationRequest request) {
-        memberService.registerMember(request);
+        MemberDTO memberDTO = memberService.registerMember(request);
+        if (memberDTO == null) {
+            return ResponseEntity.badRequest().build();
+        }
         String jwtToken = jwtUtil.issueToken(request.email(), request.memberRole());
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)

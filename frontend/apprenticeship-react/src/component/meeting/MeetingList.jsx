@@ -64,6 +64,7 @@ const MeetingList = () => {
         setDrawerVisible(false);
     }
 
+    // according to member role to get meeting info
     const fetchMeetingInfo = async () => {
         try {
             let res;
@@ -74,18 +75,10 @@ const MeetingList = () => {
                 res = await getMeetingInfoByEmail(memberEmail);
             }
             setMeetingInfoList(res.data);
-
         } catch (err) {
             console.log(err.message);
         }
     };
-
-
-
-    useEffect(() => {
-
-        fetchMeetingInfo();
-    }, [memberInfo]);
 
     const getColumnSearchProps = (dataIndex) => ({
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
@@ -155,8 +148,7 @@ const MeetingList = () => {
     const columns = meetingInfoList.length > 0 ? Object.keys(meetingInfoList[0]).slice(1).map((key) => ({
         title: formatKey(key),
         dataIndex: key,
-
-        //
+        // add sort function to each column
         sorter: (a, b) => {
             const valueA = a[key];
             const valueB = b[key];
@@ -311,69 +303,73 @@ const MeetingList = () => {
         )
     }
 
-    return (
-    <>
-        <Divider>Meeting List</Divider>
-        <Table
-            columns={columns}
-            dataSource={modifiedDataWithKey}
-            bordered={true}
-        />
-        <Drawer
-            title={selectedDrawer === 'addParticipants' ? 'Add Participants' : 'View Participants'}
-            width={400}
-            onClose={onClose}
-            open={drawerVisible}
-            bodyStyle={{paddingBottom: 80}}
-        >
-            {selectedDrawer === 'addParticipants' ? (
-                <AddParticipantForm
-                    selectedMeetingId={selectedMeetingId}
-                    onClose={onClose}
-                />
-            ) : (
-                <ViewParticipantDrawer
-                    selectedMeetingId={selectedMeetingId}
-                    onClose={onClose}
-                />
-            )}
-        </Drawer>
-        {deleteMeetingId && (
-            <Modal
-                title="Delete Meeting"
-                open={showConfirmDeleteModal}
-                onCancel={handleCancelDeleteMeeting}
-                footer={[
-                    <Button key="cancel" onClick={handleCancelDeleteMeeting}>
-                        Cancel
-                    </Button>,
-                    <Button key="delete" type="primary" danger onClick={handleDeleteMeeting}>
-                        Delete
-                    </Button>
-                ]}
-            >
-                Are you sure you want to delete this meeting?
-            </Modal>
-        )}
-        {editMeetingId && (
-            <Modal
-                title="Edit Meeting"
-                centered
-                open={showEditMeetingModal}
-                onCancel={() => {
-                    handleCloseEditMeetingModal();
-                    setEditMeetingId(null);
-                }}
-                footer={null}
-            >
-                <EditMeetingInfoForm
-                    meetingId={editMeetingId}
-                    onClose={handleCloseEditMeetingModal}
-                />
-            </Modal>
-        )}
+    useEffect(() => {
+        fetchMeetingInfo();
+    }, [memberInfo]);
 
-    </>
+    return (
+        <>
+            <Divider>Meeting List</Divider>
+            <Table
+                columns={columns}
+                dataSource={modifiedDataWithKey}
+                bordered={true}
+            />
+            <Drawer
+                title={selectedDrawer === 'addParticipants' ? 'Add Participants' : 'View Participants'}
+                width={400}
+                onClose={onClose}
+                open={drawerVisible}
+                bodyStyle={{paddingBottom: 80}}
+            >
+                {selectedDrawer === 'addParticipants' ? (
+                    <AddParticipantForm
+                        selectedMeetingId={selectedMeetingId}
+                        onClose={onClose}
+                    />
+                ) : (
+                    <ViewParticipantDrawer
+                        selectedMeetingId={selectedMeetingId}
+                        onClose={onClose}
+                    />
+                )}
+            </Drawer>
+            {deleteMeetingId && (
+                <Modal
+                    title="Delete Meeting"
+                    open={showConfirmDeleteModal}
+                    onCancel={handleCancelDeleteMeeting}
+                    footer={[
+                        <Button key="cancel" onClick={handleCancelDeleteMeeting}>
+                            Cancel
+                        </Button>,
+                        <Button key="delete" type="primary" danger onClick={handleDeleteMeeting}>
+                            Delete
+                        </Button>
+                    ]}
+                >
+                    Are you sure you want to delete this meeting?
+                </Modal>
+            )}
+            {editMeetingId && (
+                <Modal
+                    title="Edit Meeting"
+                    centered
+                    open={showEditMeetingModal}
+                    onCancel={() => {
+                        handleCloseEditMeetingModal();
+                        setEditMeetingId(null);
+                    }}
+                    footer={null}
+                >
+                    <EditMeetingInfoForm
+                        meetingId={editMeetingId}
+                        onClose={handleCloseEditMeetingModal}
+                    />
+                </Modal>
+            )}
+
+        </>
     )
 }
 

@@ -26,7 +26,6 @@ const AddMinutesPage = () => {
         } else {
             message.error('Failed to save minutes');
         }
-
     }
 
     useEffect(() => {
@@ -39,6 +38,7 @@ const AddMinutesPage = () => {
         }
         fetchMeetingInfo();
     }, [meetingId]);
+
     return (
         <>
             <HomeNav/>

@@ -43,7 +43,6 @@ export default function WelcomePage() {
                         colorScheme={'blue'}
                         bg={'blue.400'}
                         _hover={{bg: 'blue.600'}}
-
                     >
                         Get started
                     </Button>

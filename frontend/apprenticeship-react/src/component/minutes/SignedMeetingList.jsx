@@ -165,7 +165,6 @@ const SignedMeetingList = () => {
         )
     }
 
-
     return (
         <>
             <HomeNav/>
@@ -176,7 +175,6 @@ const SignedMeetingList = () => {
             />
         </>
     )
-
 }
 
 export default SignedMeetingList;

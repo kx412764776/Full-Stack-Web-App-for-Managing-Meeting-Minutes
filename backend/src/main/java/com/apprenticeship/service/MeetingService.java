@@ -251,10 +251,16 @@ public class MeetingService {
             changes = true;
         }
 
+        if (!updatedMeetingTableInfo.meetingDescription().equals(meetingInfo.getMeetingDescription())) {
+            meetingInfo.setMeetingDescription(updatedMeetingTableInfo.meetingDescription());
+            changes = true;
+        }
+
         // If there is no change, throw exception
         if (!changes) {
             throw new RequestException("Meeting information is not changed with meetingId [%s]".formatted(meetingId));
         }
+
 
         meetingRepository.save(meetingInfo);
         return meetingInfo;

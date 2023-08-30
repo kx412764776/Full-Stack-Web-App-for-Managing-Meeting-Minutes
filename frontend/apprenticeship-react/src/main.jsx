@@ -4,8 +4,8 @@ import {RouterProvider} from "react-router-dom";
 import {BrowserRouter} from "./component/shared/BrowserRouter.jsx";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-        <ChakraProvider>
-            <RouterProvider router={BrowserRouter}>
-            </RouterProvider>
-        </ChakraProvider>
+    <ChakraProvider>
+        <RouterProvider router={BrowserRouter}>
+        </RouterProvider>
+    </ChakraProvider>
 )

@@ -102,7 +102,6 @@ const UnFullSignedMeetingList = () => {
         title: formatKey(key),
         dataIndex: key,
 
-        //
         sorter: (a, b) => {
             const valueA = a[key];
             const valueB = b[key];
@@ -167,7 +166,6 @@ const UnFullSignedMeetingList = () => {
         )
     }
 
-
     return (
         <>
             <HomeNav/>
@@ -178,7 +176,6 @@ const UnFullSignedMeetingList = () => {
             />
         </>
     )
-
 }
 
 export default UnFullSignedMeetingList;

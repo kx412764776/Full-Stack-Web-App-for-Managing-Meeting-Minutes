@@ -42,7 +42,6 @@ const MeetingPage = () => {
                 </Modal>
                 <MeetingList/>
             </Space>
-
         </>
     )
 }
