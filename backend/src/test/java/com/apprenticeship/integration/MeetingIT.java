@@ -2,10 +2,7 @@ package com.apprenticeship.integration;
 
 import com.apprenticeship.dto.MeetingInfoDTO;
 import com.apprenticeship.model.MeetingTable;
-import com.apprenticeship.requestsAndResponses.AddAttendeeRequest;
-import com.apprenticeship.requestsAndResponses.LoginRequest;
-import com.apprenticeship.requestsAndResponses.LoginResponse;
-import com.apprenticeship.requestsAndResponses.MeetingUpdateRequest;
+import com.apprenticeship.requestsAndResponses.*;
 import com.apprenticeship.service.MeetingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +34,21 @@ public class MeetingIT {
 
     @BeforeEach
     void setUp() {
+        // Register a test user
+        // create a registration memberRegistrationRequest
+//        MemberRegistrationRequest memberRegistrationRequest = new MemberRegistrationRequest(
+//                "test", "test", "test@gmail.com", "test", "ACADEMIC"
+//        );
+//        webTestClient.post()
+//                .uri("/apprenticeship/register")
+//                .accept(MediaType.APPLICATION_JSON)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                // set the body to memberRegistrationRequest
+//                .body(Mono.just(memberRegistrationRequest), MemberRegistrationRequest.class)
+//                .exchange()
+//                .expectStatus()
+//                .isOk();
+
         // Login using the test user to get the JWT token
         LoginRequest loginRequest = new LoginRequest(
                 "test@gmail.com",
