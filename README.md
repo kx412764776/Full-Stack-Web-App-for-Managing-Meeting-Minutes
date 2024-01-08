@@ -1,4 +1,4 @@
-# 2766657c-development-project
+# Meeting Minutes Management System
 The way to start this web application
 
 ---
